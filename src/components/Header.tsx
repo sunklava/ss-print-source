@@ -1,12 +1,13 @@
 import { NavLink, Link } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import logo from "../assets/ss-print-header-logo-black.png";
 
 const links = [
   { to: "/", label: "Home" },
   { to: "/shop", label: "Shop" },
-  { to: "/custom", label: "Custom" },
-  { to: "/pricing", label: "Pricing" },
+  // { to: "/custom", label: "Custom" },
+  // { to: "/pricing", label: "Pricing" },
   { to: "/gallery", label: "Gallery" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
@@ -18,9 +19,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 border-b border-ink/10 bg-paper/85 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between md:h-20">
         <Link to="/" className="group flex items-center gap-3">
-          <span className="grid h-9 w-9 place-items-center bg-ink text-paper font-display text-xl font-black leading-none">
-            S
-          </span>
+          <img src={logo} alt="SS Print Logo" className="h-14 w-14 object-cover" />
           <span className="font-display text-lg font-bold tracking-tight md:text-xl">
             SS Print
             <span className="ml-2 hidden font-mono text-[10px] font-normal uppercase tracking-[0.2em] text-muted-foreground md:inline">
@@ -46,12 +45,14 @@ const Header = () => {
           ))}
         </nav>
 
+        {/*
         <Link
           to="/custom"
           className="hidden bg-ink px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-paper transition hover:bg-stamp md:inline-block"
         >
           Start Order
         </Link>
+        */}
 
         <button
           onClick={() => setOpen(!open)}

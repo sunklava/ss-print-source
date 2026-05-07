@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Palette, Truck, Sparkles } from "lucide-react";
-import hero from "@/assets/hero-apparel.jpg";
+import hero from "@/assets/ss_print_hero_image_resized_900x1050.jpg";
 import workshop from "@/assets/workshop.jpg";
 import tshirt from "@/assets/product-tshirt.jpg";
 import hoodie from "@/assets/product-hoodie.jpg";
-import mug from "@/assets/product-mug.jpg";
 import cap from "@/assets/product-cap.jpg";
 import Marquee from "@/components/Marquee";
 import SectionHeader from "@/components/SectionHeader";
@@ -12,7 +11,6 @@ import SectionHeader from "@/components/SectionHeader";
 const featured = [
   { name: "Custom Tee", price: "from $1,500", img: tshirt },
   { name: "Heavy Hoodie", price: "from $4,800", img: hoodie },
-  { name: "Branded Mug", price: "from $900", img: mug },
   { name: "Dad Cap", price: "from $1,800", img: cap },
 ];
 

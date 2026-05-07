@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Mail, Phone, MessageCircle } from "lucide-react";
+import logo from "../assets/ss-print-header-logo-black.png";
 
 const Footer = () => {
   return (
@@ -8,9 +9,7 @@ const Footer = () => {
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center bg-ink text-paper font-display text-2xl font-black">
-                S
-              </span>
+              <img src={logo} alt="SS Print Logo" className="h-10 w-10 object-cover" />
               <span className="font-display text-2xl font-bold">SS Print</span>
             </div>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
@@ -47,7 +46,7 @@ const Footer = () => {
               Navigate
             </h4>
             <ul className="space-y-2 text-sm">
-              {["Shop", "Custom", "Pricing", "Gallery", "About", "Contact"].map(
+              {["Shop", /* "Custom", */ /* "Pricing", */ "Gallery", "About", "Contact"].map(
                 (l) => (
                   <li key={l}>
                     <Link
