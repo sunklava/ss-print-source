@@ -99,7 +99,7 @@ const Home = () => {
               </div>
               <img
                 src={hero}
-                alt="Model wearing custom printed tee from SS Print"
+                alt="Model wearing custom printed tee from Sovereign & Sonata"
                 className="aspect-[4/5] w-full object-cover stamp-border"
                 width={1080}
                 height={1350}
@@ -179,7 +179,7 @@ const Home = () => {
               </h2>
               <img
                 src={workshop}
-                alt="Inside the SS Print workshop"
+                alt="Inside the Sovereign & Sonata workshop"
                 loading="lazy"
                 className="mt-10 aspect-[4/3] w-full object-cover"
               />

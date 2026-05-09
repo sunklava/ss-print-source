@@ -23,7 +23,7 @@ const About = () => {
           <div className="md:col-span-5">
             <img
               src={workshop}
-              alt="SS Print workshop"
+              alt="Sovereign & Sonata workshop"
               loading="lazy"
               className="aspect-[4/5] w-full object-cover stamp-border"
             />
@@ -43,7 +43,7 @@ const About = () => {
 
           <div className="md:col-span-7 space-y-6 text-base leading-relaxed text-foreground/90 md:text-lg">
             <p>
-              At <strong>SS Print</strong>, we bring ideas to life through
+              At <strong>Sovereign & Sonata</strong>, we bring ideas to life through
               high-quality custom printing and apparel. Based in Jamaica, our
               business is built on creativity, precision, and the drive to help
               individuals and brands stand out.
@@ -56,7 +56,7 @@ const About = () => {
               professional heat press technology.
             </p>
             <p>
-              SS Print serves a wide range of customers — from individuals
+              Sovereign & Sonata serves a wide range of customers — from individuals
               looking for unique, one-of-a-kind pieces to businesses, schools,
               and event organizers in need of branded apparel and promotional
               items. Whether it's a single custom design or a bulk order, we
@@ -76,7 +76,7 @@ const About = () => {
             </div>
 
             <p>
-              As we continue to grow, SS Print aims to expand beyond custom
+              As we continue to grow, Sovereign & Sonata aims to expand beyond custom
               printing into a full clothing brand — combining original designs
               with premium materials.
             </p>
@@ -90,7 +90,7 @@ const About = () => {
             <div>
               <div className="mb-4 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-paper/60">
                 <span className="h-px w-8 bg-paper/40" />
-                Why Choose SS Print
+                Why Choose Sovereign & Sonata
               </div>
               <h2 className="font-display text-4xl font-bold leading-[1.05] md:text-6xl">
                 Built different.
@@ -98,7 +98,7 @@ const About = () => {
                 <em className="italic text-stamp">Pressed</em> better.
               </h2>
               <p className="mt-6 text-paper/70">
-                At SS Print, your ideas don't just stay ideas — we make them real.
+                At Sovereign & Sonata, your ideas don't just stay ideas — we make them real.
               </p>
               <Link
                 to="/custom"

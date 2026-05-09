@@ -9,8 +9,8 @@ const Footer = () => {
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="SS Print Logo" className="h-10 w-10 object-cover" />
-              <span className="font-display text-2xl font-bold">SS Print</span>
+              <img src={logo} alt="Sovereign & Sonata Logo" className="h-10 w-10 object-cover" />
+              <span className="font-display text-2xl font-bold">Sovereign & Sonata</span>
             </div>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
               Custom printing & apparel out of Jamaica. Pressed with precision,
@@ -80,7 +80,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-ink/10 pt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground md:flex-row">
-          <span>© {new Date().getFullYear()} SS Print — Kingston, JA</span>
+          <span>© {new Date().getFullYear()} Sovereign & Sonata — Kingston, JA</span>
           <span>Pressed · Printed · Personal</span>
         </div>
       </div>
