@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Palette, Truck, Sparkles } from "lucide-react";
-import hero from "@/assets/hero-apparel.jpg";
+import hero from "@/assets/ss_print_hero_image_resized_900x1050.jpg";
 import workshop from "@/assets/workshop.jpg";
 import tshirt from "@/assets/product-tshirt.jpg";
 import hoodie from "@/assets/product-hoodie.jpg";
-import mug from "@/assets/product-mug.jpg";
 import cap from "@/assets/product-cap.jpg";
 import Marquee from "@/components/Marquee";
 import SectionHeader from "@/components/SectionHeader";
@@ -12,7 +11,6 @@ import SectionHeader from "@/components/SectionHeader";
 const featured = [
   { name: "Custom Tee", price: "from $1,500", img: tshirt },
   { name: "Heavy Hoodie", price: "from $4,800", img: hoodie },
-  { name: "Branded Mug", price: "from $900", img: mug },
   { name: "Dad Cap", price: "from $1,800", img: cap },
 ];
 
@@ -101,7 +99,7 @@ const Home = () => {
               </div>
               <img
                 src={hero}
-                alt="Model wearing custom printed tee from SS Print"
+                alt="Model wearing custom printed tee from Sovereign & Sonata"
                 className="aspect-[4/5] w-full object-cover stamp-border"
                 width={1080}
                 height={1350}
@@ -181,7 +179,7 @@ const Home = () => {
               </h2>
               <img
                 src={workshop}
-                alt="Inside the SS Print workshop"
+                alt="Inside the Sovereign & Sonata workshop"
                 loading="lazy"
                 className="mt-10 aspect-[4/3] w-full object-cover"
               />

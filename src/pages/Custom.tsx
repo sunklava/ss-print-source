@@ -21,7 +21,7 @@ const Custom = () => {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const msg = `Hi SS Print! I'd like to place a custom order.%0A%0AName: ${form.name}%0AContact: ${form.contact}%0AItem: ${form.item}%0AQty: ${form.quantity}%0ADetails: ${form.details}`;
+    const msg = `Hi Sovereign & Sonata! I'd like to place a custom order.%0A%0AName: ${form.name}%0AContact: ${form.contact}%0AItem: ${form.item}%0AQty: ${form.quantity}%0ADetails: ${form.details}`;
     window.open(`https://wa.me/18760000000?text=${msg}`, "_blank");
     toast.success("Opening WhatsApp to send your order…");
   };

@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* SS Print — editorial print-shop x fashion brand design system.
+/* Sovereign & Sonata — editorial print-shop x fashion brand design system.
    Cream paper, deep ink black, with a stamped-letterpress feel.
    All colors MUST be HSL. */
 
@@ -28,7 +28,7 @@
     --muted: 36 18% 90%;
     --muted-foreground: 25 10% 38%;
 
-    --accent: 18 65% 48%;              /* burnt sienna ink stamp */
+    --accent: 0 85% 50%;               /* red ink stamp */
     --accent-foreground: 40 33% 97%;
 
     --destructive: 0 70% 42%;
@@ -41,7 +41,7 @@
     --ink: 20 14% 8%;
     --paper: 40 33% 97%;
     --paper-deep: 36 25% 94%;
-    --stamp: 18 65% 48%;
+    --stamp: 0 85% 50%;
 
     --shadow-press: 0 1px 0 hsl(var(--ink) / 0.08), 0 8px 30px -12px hsl(var(--ink) / 0.18);
     --shadow-stamp: 6px 6px 0 hsl(var(--ink));
@@ -71,7 +71,7 @@
     --secondary-foreground: 40 33% 97%;
     --muted: 20 10% 14%;
     --muted-foreground: 30 10% 65%;
-    --accent: 18 65% 55%;
+    --accent: 0 85% 55%;
     --accent-foreground: 20 14% 8%;
     --destructive: 0 62.8% 40%;
     --destructive-foreground: 40 33% 97%;

@@ -1,7 +1,6 @@
 import SectionHeader from "@/components/SectionHeader";
 import tshirt from "@/assets/product-tshirt.jpg";
 import hoodie from "@/assets/product-hoodie.jpg";
-import mug from "@/assets/product-mug.jpg";
 import cap from "@/assets/product-cap.jpg";
 import gallery2 from "@/assets/gallery-2.jpg";
 import { Link } from "react-router-dom";
@@ -10,15 +9,13 @@ import { useState } from "react";
 const products = [
   { name: "Classic Tee", category: "Apparel", price: "$1,500", img: tshirt, tag: "Bestseller" },
   { name: "Heavy Hoodie", category: "Apparel", price: "$4,800", img: hoodie, tag: "New" },
-  { name: "Branded Mug", category: "Drinkware", price: "$900", img: mug },
   { name: "Dad Cap", category: "Headwear", price: "$1,800", img: cap },
   { name: "Statement Tee", category: "Apparel", price: "$1,800", img: gallery2 },
   { name: "Crew Neck", category: "Apparel", price: "$3,400", img: hoodie },
-  { name: "Travel Mug", category: "Drinkware", price: "$1,200", img: mug },
   { name: "Snapback", category: "Headwear", price: "$2,000", img: cap },
 ];
 
-const cats = ["All", "Apparel", "Headwear", "Drinkware"];
+const cats = ["All", "Apparel", "Headwear"];
 
 const Shop = () => {
   const [active, setActive] = useState("All");

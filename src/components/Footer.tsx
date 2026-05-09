@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Mail, Phone, MessageCircle } from "lucide-react";
+import logo from "../assets/ss-print-header-logo-black.png";
 
 const Footer = () => {
   return (
@@ -8,10 +9,8 @@ const Footer = () => {
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center bg-ink text-paper font-display text-2xl font-black">
-                S
-              </span>
-              <span className="font-display text-2xl font-bold">SS Print</span>
+              <img src={logo} alt="Sovereign & Sonata Logo" className="h-10 w-10 object-cover" />
+              <span className="font-display text-2xl font-bold">Sovereign & Sonata</span>
             </div>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
               Custom printing & apparel out of Jamaica. Pressed with precision,
@@ -47,7 +46,7 @@ const Footer = () => {
               Navigate
             </h4>
             <ul className="space-y-2 text-sm">
-              {["Shop", "Custom", "Pricing", "Gallery", "About", "Contact"].map(
+              {["Shop", /* "Custom", */ /* "Pricing", */ "Gallery", "About", "Contact"].map(
                 (l) => (
                   <li key={l}>
                     <Link
@@ -81,7 +80,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-ink/10 pt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground md:flex-row">
-          <span>© {new Date().getFullYear()} SS Print — Kingston, JA</span>
+          <span>© {new Date().getFullYear()} Sovereign & Sonata — Kingston, JA</span>
           <span>Pressed · Printed · Personal</span>
         </div>
       </div>
