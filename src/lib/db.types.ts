@@ -1,0 +1,61 @@
+export type Product = {
+  id: string
+  name: string
+  category: string
+  price: string
+  image_url: string | null
+  tag: string | null
+  order_index: number
+  active: boolean
+}
+
+export type PricingTier = {
+  id: string
+  name: string
+  price: string
+  unit: string
+  description: string
+  features: string[]
+  featured: boolean
+  order_index: number
+}
+
+export type PricingAddon = {
+  id: string
+  name: string
+  price: string
+  order_index: number
+}
+
+export type SiteContent = {
+  id: number
+  hero_eyebrow: string
+  hero_heading: string
+  hero_subtext: string
+  stats: { key: string; label: string }[]
+  marquee_items: string[]
+  contact_phone: string
+  contact_email: string
+  contact_hours: string
+  footer_tagline: string
+}
+
+export type Order = {
+  id: string
+  created_at: string
+  name: string
+  email: string
+  phone: string | null
+  product_type: string
+  details: string
+  quantity: number | null
+  status: 'new' | 'in_progress' | 'completed' | 'cancelled'
+}
+
+export type GalleryImage = {
+  id: string
+  image_url: string
+  caption: string | null
+  order_index: number
+  active: boolean
+}

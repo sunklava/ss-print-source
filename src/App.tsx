@@ -6,12 +6,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Layout from "@/components/Layout";
 import Home from "./pages/Home.tsx";
 import Shop from "./pages/Shop.tsx";
-// import Custom from "./pages/Custom.tsx";
-// import Pricing from "./pages/Pricing.tsx";
+import Custom from "./pages/Custom.tsx";
+import Pricing from "./pages/Pricing.tsx";
 import Gallery from "./pages/Gallery.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Admin from "./pages/Admin.tsx";
 
 const queryClient = new QueryClient();
 
@@ -25,12 +26,13 @@ const App = () => (
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/shop" element={<Shop />} />
-            {/* <Route path="/custom" element={<Custom />} /> */}
-            {/* <Route path="/pricing" element={<Pricing />} /> */}
+            <Route path="/custom" element={<Custom />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
           </Route>
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
