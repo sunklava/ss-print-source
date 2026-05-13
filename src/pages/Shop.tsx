@@ -36,7 +36,7 @@ const Shop = () => {
         <SectionHeader
           eyebrow="Shop the Press"
           title={<>The <em className="italic font-normal">collection.</em></>}
-          description="Curated essentials, ready to be customized or worn as-is. Every piece pressed in our Kingston studio."
+          description="Curated essentials, pressed with precision in our Kingston studio."
         />
 
         <div className="mt-10 flex flex-wrap gap-2 border-b border-ink/15 pb-6">

@@ -13,7 +13,7 @@ const Footer = () => {
               <span className="font-display text-2xl font-bold">Sovereign & Sonata</span>
             </div>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-              Custom printing & apparel out of Jamaica. Pressed with precision,
+              Apparel & print out of Jamaica. Pressed with precision,
               built for the bold.
             </p>
             <div className="mt-6 flex gap-3">

@@ -9,7 +9,6 @@ import Layout from "@/components/Layout";
 
 const Home = lazy(() => import("./pages/Home"));
 const Shop = lazy(() => import("./pages/Shop"));
-const Custom = lazy(() => import("./pages/Custom"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const Gallery = lazy(() => import("./pages/Gallery"));
 const About = lazy(() => import("./pages/About"));
@@ -38,7 +37,6 @@ const App = () => (
               <Route element={<Layout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/shop" element={<Shop />} />
-                <Route path="/custom" element={<Custom />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/about" element={<About />} />

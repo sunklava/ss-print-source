@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 const reasons = [
   "High-quality prints that last",
   "Fast and reliable service",
-  "Custom designs tailored to your vision",
+  "Wide range of premium apparel and accessories",
   "Affordable pricing for both single and bulk orders",
 ];
 
@@ -36,7 +36,7 @@ const About = () => {
                 Specialty
               </div>
               <div className="mt-1 font-display text-2xl font-bold">
-                Custom Apparel & Print
+                Apparel & Print
               </div>
             </div>
           </div>
@@ -44,24 +44,21 @@ const About = () => {
           <div className="md:col-span-7 space-y-6 text-base leading-relaxed text-foreground/90 md:text-lg">
             <p>
               At <strong>Sovereign & Sonata</strong>, we bring ideas to life through
-              high-quality custom printing and apparel. Based in Jamaica, our
+              high-quality apparel and print. Based in Jamaica, our
               business is built on creativity, precision, and the drive to help
               individuals and brands stand out.
             </p>
             <p>
-              We specialize in custom clothing and printed merchandise, offering
-              services that transform everyday items into personalized
-              statements. From T-shirts and hoodies to mugs, hats, and more,
-              every product is crafted with attention to detail using
-              professional heat press technology.
+              We specialize in clothing and printed merchandise — from T-shirts and hoodies
+              to mugs, hats, and more. Every product is crafted with attention to detail
+              using professional heat press technology in our Kingston studio.
             </p>
             <p>
               Sovereign & Sonata serves a wide range of customers — from individuals
               looking for unique, one-of-a-kind pieces to businesses, schools,
               and event organizers in need of branded apparel and promotional
-              items. Whether it's a single custom design or a bulk order, we
-              focus on delivering quality, consistency, and fast turnaround
-              times.
+              items. Single orders or bulk runs, we focus on quality, consistency,
+              and fast turnaround.
             </p>
 
             <div className="my-10 border-l-4 border-stamp bg-paper-deep p-6 md:p-8">
@@ -76,9 +73,8 @@ const About = () => {
             </div>
 
             <p>
-              As we continue to grow, Sovereign & Sonata aims to expand beyond custom
-              printing into a full clothing brand — combining original designs
-              with premium materials.
+              As we continue to grow, Sovereign & Sonata aims to become a full clothing brand —
+              combining original designs with premium materials, all pressed in Jamaica.
             </p>
           </div>
         </div>
@@ -101,10 +97,10 @@ const About = () => {
                 At Sovereign & Sonata, your ideas don't just stay ideas — we make them real.
               </p>
               <Link
-                to="/custom"
+                to="/shop"
                 className="mt-8 inline-block bg-paper px-6 py-4 font-mono text-xs uppercase tracking-[0.2em] text-ink transition hover:bg-stamp hover:text-paper"
               >
-                Start your order →
+                Shop now →
               </Link>
             </div>
             <ul className="space-y-5">

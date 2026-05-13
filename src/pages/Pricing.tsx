@@ -62,7 +62,7 @@ const Pricing = () => {
                 ))}
               </ul>
               <Link
-                to="/custom"
+                to="/contact"
                 className={`mt-8 block py-3 text-center font-mono text-xs uppercase tracking-[0.2em] transition ${
                   t.featured
                     ? "bg-paper text-ink hover:bg-stamp hover:text-paper"
@@ -88,9 +88,8 @@ const Pricing = () => {
             ))}
           </div>
           <p className="mt-8 max-w-2xl text-sm text-muted-foreground">
-            * Prices in JMD. All custom orders include a free digital mockup before
-            production. 50% deposit required for orders over 10 pieces. Final pricing
-            confirmed after design review.
+            * Prices in JMD. 50% deposit required for orders over 10 pieces. Final pricing
+            confirmed after order review. Contact us for bulk enquiries.
           </p>
         </section>
       )}

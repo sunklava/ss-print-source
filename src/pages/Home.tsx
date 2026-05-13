@@ -11,13 +11,13 @@ import type { Product, SiteContent } from '@/lib/db.types'
 const defaultContent: Omit<SiteContent, 'id'> = {
   hero_eyebrow: 'Vol. 01 — Spring Press',
   hero_heading: 'Wear your ideas.',
-  hero_subtext: 'Custom printing & apparel out of Jamaica. From a single tee to a full team kit — we press it sharp, fast, and built to last.',
+  hero_subtext: 'Apparel & print out of Jamaica. From a single tee to a full team kit — pressed sharp, fast, and built to last.',
   hero_image_url: null,
   workshop_image_url: null,
   stats: [
     { key: '500+', label: 'Pieces Pressed' },
     { key: '48h', label: 'Avg. Turnaround' },
-    { key: '100%', label: 'Custom' },
+    { key: '100%', label: 'Quality' },
   ],
   marquee_items: [],
   contact_phone: '',
@@ -27,8 +27,8 @@ const defaultContent: Omit<SiteContent, 'id'> = {
 }
 
 const steps = [
-  { n: "01", icon: Palette, title: "Send your idea", body: "Drop us your design, sketch, or just a vibe. We'll mock it up free." },
-  { n: "02", icon: Sparkles, title: "We press it", body: "Professional heat press on premium garments — built to last." },
+  { n: "01", icon: Palette, title: "Browse the catalogue", body: "Shop our curated selection of apparel and accessories, each piece pressed in our Kingston studio." },
+  { n: "02", icon: Sparkles, title: "Checkout securely", body: "Easy PayPal payments. Your order is confirmed instantly with no back-and-forth." },
   { n: "03", icon: Truck, title: "Pickup or delivery", body: "Fast turnaround across the island. One piece or one thousand." },
 ]
 
@@ -62,17 +62,17 @@ const Home = () => {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
-                to="/custom"
+                to="/shop"
                 className="group inline-flex items-center gap-2 bg-ink px-6 py-4 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp"
               >
-                Start a Custom Order
+                Shop Now
                 <ArrowRight size={14} className="transition group-hover:translate-x-1" />
               </Link>
               <Link
-                to="/shop"
+                to="/gallery"
                 className="inline-flex items-center gap-2 border border-ink px-6 py-4 font-mono text-xs uppercase tracking-[0.2em] transition hover:bg-ink hover:text-paper"
               >
-                Browse the Shop
+                View Gallery
               </Link>
             </div>
 
@@ -93,7 +93,7 @@ const Home = () => {
               </div>
               <img
                 src={content.hero_image_url ?? hero}
-                alt="Model wearing custom printed tee from Sovereign & Sonata"
+                alt="Model wearing a tee from Sovereign & Sonata"
                 className="aspect-[4/5] w-full object-cover stamp-border"
                 width={1080}
                 height={1350}
@@ -159,7 +159,7 @@ const Home = () => {
                 The Process
               </div>
               <h2 className="font-display text-4xl font-bold leading-[1.05] md:text-6xl">
-                From idea to <em className="italic text-stamp">pressed</em> in three steps.
+                Shop, checkout, and <em className="italic text-stamp">receive</em> in three steps.
               </h2>
               <img
                 src={content.workshop_image_url ?? workshop}
@@ -190,21 +190,21 @@ const Home = () => {
       <section className="container py-24 md:py-32">
         <div className="relative border border-ink p-10 text-center md:p-20">
           <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 bg-paper px-4 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
-            ✶ Get Started ✶
+            ✶ Shop Now ✶
           </div>
           <h2 className="font-display text-4xl font-black leading-[1] md:text-7xl">
-            Your design,
+            Premium apparel,
             <br />
-            <span className="italic">on a hanger.</span>
+            <span className="italic">pressed in JA.</span>
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
-            Tell us what you have in mind. We'll quote it free, mock it up, and press it sharp.
+            Quality pieces pressed sharp in our Kingston studio. Browse the collection and order directly online.
           </p>
           <Link
-            to="/custom"
+            to="/shop"
             className="mt-8 inline-flex items-center gap-2 bg-ink px-8 py-4 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp"
           >
-            Start your order <ArrowRight size={14} />
+            Browse the Shop <ArrowRight size={14} />
           </Link>
         </div>
       </section>

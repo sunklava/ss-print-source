@@ -5,7 +5,7 @@ const defaultItems = [
   "High-Quality Heat Press",
   "Fast Turnaround",
   "Bulk & Single Orders",
-  "Custom Designs",
+  "Original Designs",
   "Made in Jamaica",
   "Premium Apparel",
 ]
