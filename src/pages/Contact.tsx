@@ -64,9 +64,10 @@ const Contact = () => {
             <a
               key={label}
               href={href}
+              aria-label={`${label}: ${value} — ${cta}`}
               className="group flex items-center justify-between border border-ink/20 bg-paper p-6 transition hover:border-ink hover:bg-ink hover:text-paper md:p-8"
             >
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-5" aria-hidden="true">
                 <div className="grid h-12 w-12 place-items-center border border-current">
                   <Icon size={20} />
                 </div>
@@ -79,7 +80,7 @@ const Contact = () => {
                   </div>
                 </div>
               </div>
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-70 transition group-hover:translate-x-1">
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-70 transition group-hover:translate-x-1" aria-hidden="true">
                 {cta} →
               </span>
             </a>
@@ -89,7 +90,7 @@ const Contact = () => {
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           <div className="border border-ink/20 bg-paper-deep p-6 md:p-8">
             <div className="flex items-center gap-3 text-stamp">
-              <Clock size={18} />
+              <Clock size={18} aria-hidden="true" />
               <h3 className="font-display text-xl font-bold">Hours</h3>
             </div>
             <p className="mt-4 font-mono text-sm">{info.contact_hours}</p>
@@ -97,7 +98,7 @@ const Contact = () => {
 
           <div className="border border-ink/20 bg-paper-deep p-6 md:p-8">
             <div className="flex items-center gap-3 text-stamp">
-              <MapPin size={18} />
+              <MapPin size={18} aria-hidden="true" />
               <h3 className="font-display text-xl font-bold">Location</h3>
             </div>
             <p className="mt-4 leading-relaxed">

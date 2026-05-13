@@ -21,7 +21,7 @@ const Marquee = () => {
 
   const loop = [...items, ...items]
   return (
-    <div className="ticker-mask overflow-hidden border-y border-ink/15 bg-ink py-4 text-paper">
+    <div className="ticker-mask overflow-hidden border-y border-ink/15 bg-ink py-4 text-paper" aria-hidden="true">
       <div className="marquee flex w-max gap-12 whitespace-nowrap">
         {loop.map((t, i) => (
           <span key={i} className="flex items-center gap-12 font-mono text-xs uppercase tracking-[0.3em]">

@@ -85,7 +85,7 @@ const About = () => {
           <div className="grid gap-12 md:grid-cols-2">
             <div>
               <div className="mb-4 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-paper/60">
-                <span className="h-px w-8 bg-paper/40" />
+                <span className="h-px w-8 bg-paper/40" aria-hidden="true" />
                 Why Choose Sovereign & Sonata
               </div>
               <h2 className="font-display text-4xl font-bold leading-[1.05] md:text-6xl">
@@ -100,7 +100,7 @@ const About = () => {
                 to="/shop"
                 className="mt-8 inline-block bg-paper px-6 py-4 font-mono text-xs uppercase tracking-[0.2em] text-ink transition hover:bg-stamp hover:text-paper"
               >
-                Shop now →
+                Shop now <span aria-hidden="true">→</span>
               </Link>
             </div>
             <ul className="space-y-5">

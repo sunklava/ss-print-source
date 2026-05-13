@@ -39,11 +39,16 @@ const Shop = () => {
           description="Curated essentials, pressed with precision in our Kingston studio."
         />
 
-        <div className="mt-10 flex flex-wrap gap-2 border-b border-ink/15 pb-6">
+        <div
+          role="group"
+          aria-label="Filter products by category"
+          className="mt-10 flex flex-wrap gap-2 border-b border-ink/15 pb-6"
+        >
           {cats.map((c) => (
             <button
               key={c}
               onClick={() => setActive(c)}
+              aria-pressed={active === c}
               className={`px-4 py-2 font-mono text-xs uppercase tracking-[0.2em] transition ${
                 active === c ? "bg-ink text-paper" : "border border-ink/20 hover:border-ink"
               }`}
@@ -78,9 +83,10 @@ const Shop = () => {
                 )}
                 <button
                   onClick={() => handleAddToCart(p)}
-                  className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-2 translate-y-2 bg-paper py-3 font-mono text-[11px] uppercase tracking-[0.2em] opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-ink hover:text-paper"
+                  aria-label={`Add ${p.name} to cart`}
+                  className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-2 translate-y-2 bg-paper py-3 font-mono text-[11px] uppercase tracking-[0.2em] opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-ink hover:text-paper focus:translate-y-0 focus:opacity-100"
                 >
-                  <ShoppingBag size={12} /> Add to Cart
+                  <ShoppingBag size={12} aria-hidden="true" /> Add to Cart
                 </button>
               </div>
               <div className="mt-3">

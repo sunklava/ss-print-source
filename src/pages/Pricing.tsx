@@ -32,8 +32,9 @@ const Pricing = () => {
 
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {tiers.map((t) => (
-            <div
+            <article
               key={t.id}
+              aria-labelledby={`tier-${t.id}`}
               className={`relative flex flex-col border p-8 ${
                 t.featured ? "bg-ink text-paper border-ink" : "bg-paper border-ink/20"
               }`}
@@ -43,7 +44,7 @@ const Pricing = () => {
                   Most Popular
                 </span>
               )}
-              <h3 className="font-display text-2xl font-bold">{t.name}</h3>
+              <h3 id={`tier-${t.id}`} className="font-display text-2xl font-bold">{t.name}</h3>
               <p className={`mt-2 text-sm ${t.featured ? "text-paper/70" : "text-muted-foreground"}`}>
                 {t.description}
               </p>
@@ -71,7 +72,7 @@ const Pricing = () => {
               >
                 Get a quote
               </Link>
-            </div>
+            </article>
           ))}
         </div>
       </section>

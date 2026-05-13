@@ -56,8 +56,8 @@ function CheckoutInner() {
 
   return (
     <section className="container py-16 md:py-24">
-      <button onClick={() => navigate('/shop')} className="mb-10 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground transition hover:text-ink">
-        <ArrowLeft size={13} /> Back to shop
+      <button onClick={() => navigate('/shop')} aria-label="Go back to shop" className="mb-10 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground transition hover:text-ink">
+        <ArrowLeft size={13} aria-hidden="true" /> Back to shop
       </button>
 
       <h1 className="font-display text-4xl font-black md:text-5xl mb-12">Checkout</h1>
@@ -99,20 +99,24 @@ function CheckoutInner() {
           {step === 'details' ? (
             <>
               <h2 className="font-display text-xl font-bold mb-6 pb-2 border-b border-ink/15">Your Details</h2>
-              <form onSubmit={e => { e.preventDefault(); setStep('payment') }} className="space-y-5">
+              <form onSubmit={e => { e.preventDefault(); setStep('payment') }} className="space-y-5" aria-label="Your details">
                 <div>
-                  <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Full Name *</label>
-                  <input required value={name} onChange={e => setName(e.target.value)}
+                  <label htmlFor="checkout-name" className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                    Full Name <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                  </label>
+                  <input id="checkout-name" required aria-required="true" value={name} onChange={e => setName(e.target.value)}
                     className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink" />
                 </div>
                 <div>
-                  <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Email *</label>
-                  <input required type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  <label htmlFor="checkout-email" className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                    Email <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                  </label>
+                  <input id="checkout-email" required aria-required="true" type="email" value={email} onChange={e => setEmail(e.target.value)}
                     className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink" />
                 </div>
                 <div>
-                  <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Phone (optional)</label>
-                  <input value={phone} onChange={e => setPhone(e.target.value)}
+                  <label htmlFor="checkout-phone" className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Phone (optional)</label>
+                  <input id="checkout-phone" value={phone} onChange={e => setPhone(e.target.value)}
                     className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink" />
                 </div>
                 <button type="submit"

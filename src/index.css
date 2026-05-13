@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -10,38 +10,38 @@
 
 @layer base {
   :root {
-    --background: 40 33% 97%;          /* warm cream paper */
-    --foreground: 20 14% 8%;           /* deep ink black */
+    --background: 30 6% 87%;           /* cool-warm light gray — matches hero */
+    --foreground: 220 10% 8%;          /* cool near-black */
 
-    --card: 40 33% 97%;
-    --card-foreground: 20 14% 8%;
+    --card: 30 6% 87%;
+    --card-foreground: 220 10% 8%;
 
-    --popover: 40 33% 97%;
-    --popover-foreground: 20 14% 8%;
+    --popover: 30 6% 87%;
+    --popover-foreground: 220 10% 8%;
 
-    --primary: 20 14% 8%;              /* ink black */
-    --primary-foreground: 40 33% 97%;
+    --primary: 220 10% 8%;             /* cool ink black */
+    --primary-foreground: 30 6% 87%;
 
-    --secondary: 36 22% 92%;           /* aged paper */
-    --secondary-foreground: 20 14% 8%;
+    --secondary: 30 5% 80%;            /* slightly darker gray */
+    --secondary-foreground: 220 10% 8%;
 
-    --muted: 36 18% 90%;
-    --muted-foreground: 25 10% 38%;
+    --muted: 30 5% 77%;
+    --muted-foreground: 220 6% 38%;
 
-    --accent: 0 85% 50%;               /* red ink stamp */
-    --accent-foreground: 40 33% 97%;
+    --accent: 0 78% 44%;               /* bold red — matches hero */
+    --accent-foreground: 30 6% 87%;
 
-    --destructive: 0 70% 42%;
-    --destructive-foreground: 40 33% 97%;
+    --destructive: 0 70% 40%;
+    --destructive-foreground: 30 6% 87%;
 
-    --border: 30 15% 85%;
-    --input: 30 15% 85%;
-    --ring: 20 14% 8%;
+    --border: 30 5% 72%;
+    --input: 30 5% 72%;
+    --ring: 220 10% 8%;
 
-    --ink: 20 14% 8%;
-    --paper: 40 33% 97%;
-    --paper-deep: 36 25% 94%;
-    --stamp: 0 85% 50%;
+    --ink: 220 10% 8%;
+    --paper: 30 6% 87%;
+    --paper-deep: 30 5% 80%;
+    --stamp: 0 78% 44%;
 
     --shadow-press: 0 1px 0 hsl(var(--ink) / 0.08), 0 8px 30px -12px hsl(var(--ink) / 0.18);
     --shadow-stamp: 6px 6px 0 hsl(var(--ink));
@@ -59,25 +59,25 @@
   }
 
   .dark {
-    --background: 20 14% 8%;
-    --foreground: 40 33% 97%;
-    --card: 20 14% 8%;
-    --card-foreground: 40 33% 97%;
-    --popover: 20 14% 8%;
-    --popover-foreground: 40 33% 97%;
-    --primary: 40 33% 97%;
-    --primary-foreground: 20 14% 8%;
-    --secondary: 20 10% 14%;
-    --secondary-foreground: 40 33% 97%;
-    --muted: 20 10% 14%;
-    --muted-foreground: 30 10% 65%;
-    --accent: 0 85% 55%;
-    --accent-foreground: 20 14% 8%;
+    --background: 220 10% 8%;
+    --foreground: 30 6% 87%;
+    --card: 220 10% 8%;
+    --card-foreground: 30 6% 87%;
+    --popover: 220 10% 8%;
+    --popover-foreground: 30 6% 87%;
+    --primary: 30 6% 87%;
+    --primary-foreground: 220 10% 8%;
+    --secondary: 220 8% 14%;
+    --secondary-foreground: 30 6% 87%;
+    --muted: 220 8% 14%;
+    --muted-foreground: 220 6% 60%;
+    --accent: 0 78% 48%;
+    --accent-foreground: 220 10% 8%;
     --destructive: 0 62.8% 40%;
-    --destructive-foreground: 40 33% 97%;
-    --border: 20 10% 18%;
-    --input: 20 10% 18%;
-    --ring: 40 33% 97%;
+    --destructive-foreground: 30 6% 87%;
+    --border: 220 8% 18%;
+    --input: 220 8% 18%;
+    --ring: 30 6% 87%;
   }
 }
 
@@ -93,12 +93,16 @@
     font-feature-settings: "ss01", "cv11";
   }
   h1, h2, h3, h4, h5 {
-    @apply font-display tracking-tight;
+    @apply font-display;
+  }
+  *:focus-visible {
+    outline: 2px solid hsl(var(--stamp));
+    outline-offset: 3px;
   }
 }
 
 @layer utilities {
-  .font-display { font-family: 'Playfair Display', Georgia, serif; }
+  .font-display { font-family: 'Bebas Neue', 'Oswald', Impact, sans-serif; letter-spacing: 0.02em; }
   .font-sans    { font-family: 'Inter', system-ui, sans-serif; }
   .font-mono    { font-family: 'JetBrains Mono', ui-monospace, monospace; }
 

@@ -69,19 +69,19 @@ export default function Admin() {
       <div className="flex min-h-screen items-center justify-center bg-background p-6">
         <div className="w-full max-w-sm">
           <h1 className="mb-6 text-center font-display text-2xl font-bold">Admin Login</h1>
-          <form onSubmit={login} className="space-y-4">
+          <form onSubmit={login} className="space-y-4" aria-label="Admin login">
             <div>
-              <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Email</label>
-              <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+              <label htmlFor="admin-email" className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Email</label>
+              <input id="admin-email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
                 className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink" />
             </div>
             <div>
-              <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Password</label>
-              <input type="password" required value={password} onChange={e => setPassword(e.target.value)}
+              <label htmlFor="admin-password" className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Password</label>
+              <input id="admin-password" type="password" required value={password} onChange={e => setPassword(e.target.value)}
                 className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink" />
             </div>
-            {authError && <p className="text-sm text-destructive">{authError}</p>}
-            <button type="submit" disabled={signingIn}
+            {authError && <p role="alert" className="text-sm text-destructive">{authError}</p>}
+            <button type="submit" disabled={signingIn} aria-busy={signingIn}
               className="w-full bg-ink py-3 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp disabled:opacity-50">
               {signingIn ? 'Signing in…' : 'Sign In'}
             </button>
@@ -93,7 +93,7 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b border-ink/10 bg-paper/90 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-ink/10 bg-paper/90 backdrop-blur-md" role="banner">
         <div className="container flex h-16 items-center justify-between">
           <span className="font-display text-lg font-bold">Admin</span>
           <div className="flex items-center gap-4">
@@ -106,7 +106,7 @@ export default function Admin() {
         </div>
       </header>
 
-      <div className="container py-8">
+      <main className="container py-8" id="admin-content">
         <Tabs defaultValue="products">
           <TabsList className="mb-8 h-auto flex-wrap gap-1 bg-paper-deep p-1">
             {['products', 'pricing', 'content', 'orders', 'gallery'].map(tab => (
@@ -122,7 +122,7 @@ export default function Admin() {
           <TabsContent value="orders"><OrdersTab /></TabsContent>
           <TabsContent value="gallery"><GalleryTab /></TabsContent>
         </Tabs>
-      </div>
+      </main>
     </div>
   )
 }

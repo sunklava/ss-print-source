@@ -31,7 +31,7 @@ const Header = () => {
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-7 md:flex">
+          <nav className="hidden items-center gap-7 md:flex" aria-label="Main navigation">
             {links.map((l) => (
               <NavLink
                 key={l.to}
@@ -52,27 +52,29 @@ const Header = () => {
             <button
               onClick={() => openCart(true)}
               className="relative flex items-center gap-2 border border-ink/20 px-3 py-2 font-mono text-xs uppercase tracking-[0.18em] transition hover:border-ink"
-              aria-label="Open cart"
+              aria-label={count > 0 ? `Open cart, ${count} item${count !== 1 ? 's' : ''}` : 'Open cart'}
             >
-              <ShoppingBag size={15} />
+              <ShoppingBag size={15} aria-hidden="true" />
               {count > 0 && (
-                <span className="font-mono text-xs">{count}</span>
+                <span className="font-mono text-xs" aria-hidden="true">{count}</span>
               )}
             </button>
 
             <button
               onClick={() => setOpen(!open)}
               className="md:hidden"
-              aria-label="Menu"
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              aria-expanded={open}
+              aria-controls="mobile-nav"
             >
-              {open ? <X /> : <Menu />}
+              {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
             </button>
           </div>
         </div>
 
         {open && (
           <div className="border-t border-ink/10 bg-paper md:hidden">
-            <nav className="container flex flex-col py-4">
+            <nav id="mobile-nav" className="container flex flex-col py-4" aria-label="Mobile navigation">
               {links.map((l) => (
                 <NavLink
                   key={l.to}

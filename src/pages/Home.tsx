@@ -51,7 +51,7 @@ const Home = () => {
         <div className="container grid items-center gap-10 py-12 md:grid-cols-12 md:gap-16 md:py-20">
           <div className="md:col-span-6 reveal-up">
             <div className="mb-6 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
-              <span className="h-px w-8 bg-ink/40" />
+              <span className="h-px w-8 bg-ink/40" aria-hidden="true" />
               {content.hero_eyebrow}
             </div>
             <h1 className="font-display text-[3.2rem] font-black leading-[0.95] tracking-tight md:text-[6.5rem]">
@@ -66,7 +66,7 @@ const Home = () => {
                 className="group inline-flex items-center gap-2 bg-ink px-6 py-4 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp"
               >
                 Shop Now
-                <ArrowRight size={14} className="transition group-hover:translate-x-1" />
+                <ArrowRight size={14} className="transition group-hover:translate-x-1" aria-hidden="true" />
               </Link>
               <Link
                 to="/gallery"
@@ -88,7 +88,7 @@ const Home = () => {
 
           <div className="md:col-span-6 reveal-up">
             <div className="relative">
-              <div className="absolute -left-4 -top-4 z-10 bg-stamp px-3 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-paper">
+              <div className="absolute -left-4 -top-4 z-10 bg-stamp px-3 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-paper" aria-hidden="true">
                 Lookbook · 26
               </div>
               <img
@@ -98,7 +98,7 @@ const Home = () => {
                 width={1080}
                 height={1350}
               />
-              <div className="absolute -bottom-4 -right-4 bg-paper border border-ink px-4 py-2 font-mono text-xs uppercase tracking-[0.2em]">
+              <div className="absolute -bottom-4 -right-4 bg-paper border border-ink px-4 py-2 font-mono text-xs uppercase tracking-[0.2em]" aria-hidden="true">
                 Pressed in JA ✶
               </div>
             </div>
@@ -119,8 +119,9 @@ const Home = () => {
             <Link
               to="/shop"
               className="hidden shrink-0 font-mono text-xs uppercase tracking-[0.2em] underline underline-offset-4 hover:text-stamp md:inline"
+              aria-label="View all products"
             >
-              View all →
+              View all <span aria-hidden="true">→</span>
             </Link>
           </div>
 
@@ -155,7 +156,7 @@ const Home = () => {
           <div className="grid gap-12 md:grid-cols-12">
             <div className="md:col-span-5">
               <div className="mb-4 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-paper/60">
-                <span className="h-px w-8 bg-paper/40" />
+                <span className="h-px w-8 bg-paper/40" aria-hidden="true" />
                 The Process
               </div>
               <h2 className="font-display text-4xl font-bold leading-[1.05] md:text-6xl">
@@ -171,10 +172,10 @@ const Home = () => {
             <div className="space-y-8 md:col-span-7 md:pl-8">
               {steps.map(({ n, icon: Icon, title, body }) => (
                 <div key={n} className="flex gap-6 border-b border-paper/15 pb-8 last:border-b-0">
-                  <div className="font-display text-5xl font-black text-paper/30 md:text-6xl">{n}</div>
+                  <div className="font-display text-5xl font-black text-paper/30 md:text-6xl" aria-hidden="true">{n}</div>
                   <div className="flex-1">
                     <div className="mb-3 flex items-center gap-3">
-                      <Icon size={18} className="text-stamp" />
+                      <Icon size={18} className="text-stamp" aria-hidden="true" />
                       <h3 className="font-display text-2xl font-semibold">{title}</h3>
                     </div>
                     <p className="text-paper/70 leading-relaxed">{body}</p>
@@ -189,7 +190,7 @@ const Home = () => {
       {/* CTA */}
       <section className="container py-24 md:py-32">
         <div className="relative border border-ink p-10 text-center md:p-20">
-          <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 bg-paper px-4 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
+          <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 bg-paper px-4 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground" aria-hidden="true">
             ✶ Shop Now ✶
           </div>
           <h2 className="font-display text-4xl font-black leading-[1] md:text-7xl">
@@ -204,7 +205,7 @@ const Home = () => {
             to="/shop"
             className="mt-8 inline-flex items-center gap-2 bg-ink px-8 py-4 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp"
           >
-            Browse the Shop <ArrowRight size={14} />
+            Browse the Shop <ArrowRight size={14} aria-hidden="true" />
           </Link>
         </div>
       </section>

@@ -23,20 +23,20 @@ const Gallery = () => {
       {images.length > 0 ? (
         <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {images.map((img) => (
-            <div key={img.id} className="group relative overflow-hidden bg-paper-deep">
+            <figure key={img.id} className="group relative overflow-hidden bg-paper-deep m-0">
               <img
                 src={img.image_url}
-                alt={img.caption ?? ''}
+                alt={img.caption ?? 'Gallery piece pressed at Sovereign & Sonata'}
                 loading="lazy"
                 className="aspect-square w-full object-cover transition duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-ink/0 transition group-hover:bg-ink/30" />
+              <div className="absolute inset-0 bg-ink/0 transition group-hover:bg-ink/30" aria-hidden="true" />
               {img.caption && (
-                <div className="absolute left-3 top-3 bg-paper px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em]">
+                <figcaption className="absolute left-3 top-3 bg-paper px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em]">
                   {img.caption}
-                </div>
+                </figcaption>
               )}
-            </div>
+            </figure>
           ))}
         </div>
       ) : (

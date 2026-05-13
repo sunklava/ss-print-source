@@ -32,25 +32,31 @@ export default function CartDrawer() {
                   {item.image_url ? (
                     <img src={item.image_url} alt={item.name} className="h-20 w-16 shrink-0 object-cover bg-paper-deep" />
                   ) : (
-                    <div className="h-20 w-16 shrink-0 bg-paper-deep" />
+                    <div className="h-20 w-16 shrink-0 bg-paper-deep" aria-hidden="true" />
                   )}
                   <div className="flex flex-1 flex-col min-w-0">
                     <span className="font-display font-semibold truncate">{item.name}</span>
                     <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{item.category}</span>
                     <span className="mt-1 font-mono text-xs">{item.priceDisplay}</span>
                     <div className="mt-2 flex items-center gap-2">
-                      <button onClick={() => updateQty(item.id, item.quantity - 1)}
+                      <button
+                        onClick={() => updateQty(item.id, item.quantity - 1)}
+                        aria-label={`Decrease quantity of ${item.name}`}
                         className="border border-ink/20 p-1 transition hover:border-ink">
-                        <Minus size={11} />
+                        <Minus size={11} aria-hidden="true" />
                       </button>
-                      <span className="font-mono text-sm w-6 text-center">{item.quantity}</span>
-                      <button onClick={() => updateQty(item.id, item.quantity + 1)}
+                      <span className="font-mono text-sm w-6 text-center" aria-live="polite" aria-label={`Quantity: ${item.quantity}`}>{item.quantity}</span>
+                      <button
+                        onClick={() => updateQty(item.id, item.quantity + 1)}
+                        aria-label={`Increase quantity of ${item.name}`}
                         className="border border-ink/20 p-1 transition hover:border-ink">
-                        <Plus size={11} />
+                        <Plus size={11} aria-hidden="true" />
                       </button>
-                      <button onClick={() => removeItem(item.id)}
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        aria-label={`Remove ${item.name} from cart`}
                         className="ml-auto border border-ink/20 p-1 transition hover:border-destructive hover:text-destructive">
-                        <Trash2 size={11} />
+                        <Trash2 size={11} aria-hidden="true" />
                       </button>
                     </div>
                   </div>
