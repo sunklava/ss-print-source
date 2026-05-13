@@ -1,8 +1,10 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 
 const Layout = () => {
+  const { key } = useLocation();
+
   return (
     <div className="paper-grain min-h-screen">
       <a
@@ -13,7 +15,9 @@ const Layout = () => {
       </a>
       <Header />
       <main id="main-content">
-        <Outlet />
+        <div key={key} className="page-enter">
+          <Outlet />
+        </div>
       </main>
       <Footer />
     </div>
