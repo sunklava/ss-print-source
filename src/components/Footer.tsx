@@ -1,8 +1,32 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Mail, Phone, MessageCircle } from "lucide-react";
 import logo from "../assets/ss-print-header-logo-black.png";
+import { supabase, isConfigured } from "@/lib/supabase";
+
+const defaults = {
+  contact_phone: '+1 (876) 000-0000',
+  contact_email: 'hello@ssprint.jm',
+  contact_hours: 'Mon–Sat · 9am–7pm',
+  footer_tagline: 'Apparel & print out of Jamaica. Pressed with precision, built for the bold.',
+}
 
 const Footer = () => {
+  const [info, setInfo] = useState(defaults)
+
+  useEffect(() => {
+    if (!isConfigured) return
+    supabase!
+      .from('site_content')
+      .select('contact_phone, contact_email, contact_hours, footer_tagline')
+      .eq('id', 1)
+      .single()
+      .then(({ data }) => { if (data) setInfo(prev => ({ ...prev, ...data })) })
+  }, [])
+
+  const whatsappHref = `https://wa.me/${info.contact_phone.replace(/\D/g, '')}`
+  const emailHref = `mailto:${info.contact_email}`
+
   return (
     <footer className="mt-24 border-t border-ink/15 bg-paper-deep">
       <div className="container py-16">
@@ -13,30 +37,29 @@ const Footer = () => {
               <span className="font-display text-2xl font-bold">Sovereign & Sonata</span>
             </div>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-              Apparel & print out of Jamaica. Pressed with precision,
-              built for the bold.
+              {info.footer_tagline}
             </p>
             <div className="mt-6 flex gap-3">
               <a
-                href="https://wa.me/18760000000"
+                href={whatsappHref}
                 className="grid h-10 w-10 place-items-center border border-ink/20 transition hover:bg-ink hover:text-paper"
-                aria-label="WhatsApp"
+                aria-label={`WhatsApp: ${info.contact_phone}`}
               >
-                <MessageCircle size={16} />
+                <MessageCircle size={16} aria-hidden="true" />
               </a>
               <a
                 href="https://instagram.com"
                 className="grid h-10 w-10 place-items-center border border-ink/20 transition hover:bg-ink hover:text-paper"
                 aria-label="Instagram"
               >
-                <Instagram size={16} />
+                <Instagram size={16} aria-hidden="true" />
               </a>
               <a
-                href="mailto:hello@ssprint.jm"
+                href={emailHref}
                 className="grid h-10 w-10 place-items-center border border-ink/20 transition hover:bg-ink hover:text-paper"
-                aria-label="Email"
+                aria-label={`Email: ${info.contact_email}`}
               >
-                <Mail size={16} />
+                <Mail size={16} aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -46,18 +69,16 @@ const Footer = () => {
               Navigate
             </h4>
             <ul className="space-y-2 text-sm">
-              {["Shop", /* "Custom", */ /* "Pricing", */ "Gallery", "About", "Contact"].map(
-                (l) => (
-                  <li key={l}>
-                    <Link
-                      to={`/${l.toLowerCase()}`}
-                      className="text-muted-foreground transition hover:text-ink"
-                    >
-                      {l}
-                    </Link>
-                  </li>
-                )
-              )}
+              {["Shop", "Gallery", "About", "Contact"].map((l) => (
+                <li key={l}>
+                  <Link
+                    to={`/${l.toLowerCase()}`}
+                    className="text-muted-foreground transition hover:text-ink"
+                  >
+                    {l}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -67,13 +88,19 @@ const Footer = () => {
             </h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
-                <Phone size={14} /> +1 (876) 000-0000
+                <Phone size={14} aria-hidden="true" />
+                <a href={`tel:+${info.contact_phone.replace(/\D/g, '')}`} className="hover:text-ink transition">
+                  {info.contact_phone}
+                </a>
               </li>
               <li className="flex items-center gap-2">
-                <Mail size={14} /> hello@ssprint.jm
+                <Mail size={14} aria-hidden="true" />
+                <a href={emailHref} className="hover:text-ink transition">
+                  {info.contact_email}
+                </a>
               </li>
               <li className="pt-2 font-mono text-xs uppercase tracking-[0.18em]">
-                Mon–Sat · 9am–7pm
+                {info.contact_hours}
               </li>
             </ul>
           </div>
