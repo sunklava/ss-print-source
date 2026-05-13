@@ -1,25 +1,34 @@
-import SectionHeader from "@/components/SectionHeader";
-import tshirt from "@/assets/product-tshirt.jpg";
-import hoodie from "@/assets/product-hoodie.jpg";
-import cap from "@/assets/product-cap.jpg";
-import gallery2 from "@/assets/gallery-2.jpg";
-import { Link } from "react-router-dom";
-import { useState } from "react";
-
-const products = [
-  { name: "Classic Tee", category: "Apparel", price: "$1,500", img: tshirt, tag: "Bestseller" },
-  { name: "Heavy Hoodie", category: "Apparel", price: "$4,800", img: hoodie, tag: "New" },
-  { name: "Dad Cap", category: "Headwear", price: "$1,800", img: cap },
-  { name: "Statement Tee", category: "Apparel", price: "$1,800", img: gallery2 },
-  { name: "Crew Neck", category: "Apparel", price: "$3,400", img: hoodie },
-  { name: "Snapback", category: "Headwear", price: "$2,000", img: cap },
-];
-
-const cats = ["All", "Apparel", "Headwear"];
+import { useState, useEffect } from 'react'
+import SectionHeader from "@/components/SectionHeader"
+import { supabase, isConfigured } from '@/lib/supabase'
+import type { Product } from '@/lib/db.types'
+import { useCart, parsePrice } from '@/lib/cart'
+import { ShoppingBag } from 'lucide-react'
 
 const Shop = () => {
-  const [active, setActive] = useState("All");
-  const list = active === "All" ? products : products.filter((p) => p.category === active);
+  const [products, setProducts] = useState<Product[]>([])
+  const [active, setActive] = useState("All")
+  const { addItem } = useCart()
+
+  useEffect(() => {
+    if (!isConfigured) return
+    supabase!.from('products').select('*').eq('active', true).order('order_index')
+      .then(({ data }) => { if (data) setProducts(data) })
+  }, [])
+
+  const cats = ["All", ...Array.from(new Set(products.map(p => p.category)))]
+  const list = active === "All" ? products : products.filter(p => p.category === active)
+
+  const handleAddToCart = (p: Product) => {
+    addItem({
+      id: p.id,
+      name: p.name,
+      price: parsePrice(p.price),
+      priceDisplay: p.price,
+      image_url: p.image_url,
+      category: p.category,
+    })
+  }
 
   return (
     <>
@@ -36,9 +45,7 @@ const Shop = () => {
               key={c}
               onClick={() => setActive(c)}
               className={`px-4 py-2 font-mono text-xs uppercase tracking-[0.2em] transition ${
-                active === c
-                  ? "bg-ink text-paper"
-                  : "border border-ink/20 hover:border-ink"
+                active === c ? "bg-ink text-paper" : "border border-ink/20 hover:border-ink"
               }`}
             >
               {c}
@@ -47,26 +54,34 @@ const Shop = () => {
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-8 lg:grid-cols-4">
-          {list.map((p, i) => (
-            <div key={p.name + i} className="group">
+          {list.map((p) => (
+            <div key={p.id} className="group">
               <div className="relative overflow-hidden bg-paper-deep">
-                <img
-                  src={p.img}
-                  alt={p.name}
-                  loading="lazy"
-                  className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
-                />
+                {p.image_url ? (
+                  <img
+                    src={p.image_url}
+                    alt={p.name}
+                    loading="lazy"
+                    className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="aspect-[4/5] w-full bg-paper-deep flex items-center justify-center">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                      No image
+                    </span>
+                  </div>
+                )}
                 {p.tag && (
                   <span className="absolute left-3 top-3 bg-ink px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-paper">
                     {p.tag}
                   </span>
                 )}
-                <Link
-                  to="/custom"
-                  className="absolute inset-x-3 bottom-3 translate-y-2 bg-paper py-3 text-center font-mono text-[11px] uppercase tracking-[0.2em] opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100"
+                <button
+                  onClick={() => handleAddToCart(p)}
+                  className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-2 translate-y-2 bg-paper py-3 font-mono text-[11px] uppercase tracking-[0.2em] opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-ink hover:text-paper"
                 >
-                  Order →
-                </Link>
+                  <ShoppingBag size={12} /> Add to Cart
+                </button>
               </div>
               <div className="mt-3">
                 <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
@@ -79,10 +94,15 @@ const Shop = () => {
               </div>
             </div>
           ))}
+          {list.length === 0 && (
+            <p className="col-span-full py-16 text-center font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              No products available
+            </p>
+          )}
         </div>
       </section>
     </>
-  );
-};
+  )
+}
 
-export default Shop;
+export default Shop

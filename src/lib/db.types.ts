@@ -32,6 +32,8 @@ export type SiteContent = {
   hero_eyebrow: string
   hero_heading: string
   hero_subtext: string
+  hero_image_url: string | null
+  workshop_image_url: string | null
   stats: { key: string; label: string }[]
   marquee_items: string[]
   contact_phone: string
@@ -50,6 +52,10 @@ export type Order = {
   details: string
   quantity: number | null
   status: 'new' | 'in_progress' | 'completed' | 'cancelled'
+  payment_status: 'pending' | 'paid' | 'failed' | null
+  payment_id: string | null
+  total_amount: number | null
+  items: unknown | null
 }
 
 export type GalleryImage = {

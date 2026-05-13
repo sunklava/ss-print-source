@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { SiteContent } from '@/lib/db.types'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 const defaults: Omit<SiteContent, 'id'> = {
   hero_eyebrow: 'Vol. 01 — Spring Press',
   hero_heading: 'Wear your ideas.',
   hero_subtext: 'Custom printing & apparel out of Jamaica. From a single tee to a full team kit — we press it sharp, fast, and built to last.',
+  hero_image_url: null,
+  workshop_image_url: null,
   stats: [
     { key: '500+', label: 'Pieces Pressed' },
     { key: '48h', label: 'Avg. Turnaround' },
@@ -23,6 +25,10 @@ const defaults: Omit<SiteContent, 'id'> = {
 export default function ContentTab() {
   const [content, setContent] = useState<Omit<SiteContent, 'id'>>(defaults)
   const [saving, setSaving] = useState(false)
+  const [uploadingHero, setUploadingHero] = useState(false)
+  const [uploadingWorkshop, setUploadingWorkshop] = useState(false)
+  const heroImgRef = useRef<HTMLInputElement>(null)
+  const workshopImgRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     supabase!.from('site_content').select('*').eq('id', 1).single()
@@ -36,6 +42,25 @@ export default function ContentTab() {
     setSaving(false)
     if (error) { toast.error('Failed to save'); return }
     toast.success('Content saved')
+  }
+
+  const uploadSiteImage = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: 'hero_image_url' | 'workshop_image_url',
+    setLoading: (v: boolean) => void,
+    ref: React.RefObject<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setLoading(true)
+    const ext = file.name.split('.').pop()
+    const path = `${field}-${Date.now()}.${ext}`
+    const { error } = await supabase!.storage.from('site').upload(path, file, { upsert: true })
+    if (error) { toast.error('Upload failed: ' + error.message); setLoading(false); return }
+    const { data: { publicUrl } } = supabase!.storage.from('site').getPublicUrl(path)
+    setContent(c => ({ ...c, [field]: publicUrl }))
+    setLoading(false)
+    if (ref.current) ref.current.value = ''
   }
 
   const setStat = (i: number, field: 'key' | 'label', value: string) => {
@@ -70,6 +95,58 @@ export default function ContentTab() {
           {textField('Eyebrow text', 'hero_eyebrow')}
           {textField('Heading', 'hero_heading')}
           {textField('Subtext', 'hero_subtext', 3)}
+
+          {/* Hero image */}
+          <div>
+            <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Hero Image</label>
+            <input ref={heroImgRef} type="file" accept="image/*" onChange={e => uploadSiteImage(e, 'hero_image_url', setUploadingHero, heroImgRef as React.RefObject<HTMLInputElement>)} className="hidden" />
+            {content.hero_image_url ? (
+              <div className="mt-2 flex items-center gap-3">
+                <img src={content.hero_image_url} alt="" className="h-16 w-24 object-cover border border-ink/20" />
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => heroImgRef.current?.click()} disabled={uploadingHero}
+                    className="flex items-center gap-1.5 border border-ink/30 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] transition hover:border-ink disabled:opacity-50">
+                    <Upload size={11} /> {uploadingHero ? 'Uploading…' : 'Replace'}
+                  </button>
+                  <button type="button" onClick={() => setContent(c => ({ ...c, hero_image_url: null }))}
+                    className="border border-ink/30 p-1.5 transition hover:border-destructive hover:text-destructive">
+                    <X size={11} />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button type="button" onClick={() => heroImgRef.current?.click()} disabled={uploadingHero}
+                className="mt-2 flex w-full items-center justify-center gap-2 border border-dashed border-ink/20 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:border-ink hover:text-ink disabled:opacity-50">
+                <Upload size={13} /> {uploadingHero ? 'Uploading…' : 'Upload Hero Image'}
+              </button>
+            )}
+          </div>
+
+          {/* Workshop / process image */}
+          <div>
+            <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Process Section Image</label>
+            <input ref={workshopImgRef} type="file" accept="image/*" onChange={e => uploadSiteImage(e, 'workshop_image_url', setUploadingWorkshop, workshopImgRef as React.RefObject<HTMLInputElement>)} className="hidden" />
+            {content.workshop_image_url ? (
+              <div className="mt-2 flex items-center gap-3">
+                <img src={content.workshop_image_url} alt="" className="h-16 w-24 object-cover border border-ink/20" />
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => workshopImgRef.current?.click()} disabled={uploadingWorkshop}
+                    className="flex items-center gap-1.5 border border-ink/30 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] transition hover:border-ink disabled:opacity-50">
+                    <Upload size={11} /> {uploadingWorkshop ? 'Uploading…' : 'Replace'}
+                  </button>
+                  <button type="button" onClick={() => setContent(c => ({ ...c, workshop_image_url: null }))}
+                    className="border border-ink/30 p-1.5 transition hover:border-destructive hover:text-destructive">
+                    <X size={11} />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button type="button" onClick={() => workshopImgRef.current?.click()} disabled={uploadingWorkshop}
+                className="mt-2 flex w-full items-center justify-center gap-2 border border-dashed border-ink/20 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:border-ink hover:text-ink disabled:opacity-50">
+                <Upload size={13} /> {uploadingWorkshop ? 'Uploading…' : 'Upload Process Image'}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -50,7 +50,7 @@ export default function OrdersTab() {
         <table className="w-full text-sm">
           <thead className="bg-paper-deep">
             <tr className="border-b border-ink/15">
-              {['Date', 'Name', 'Email', 'Item', 'Qty', 'Status', ''].map(h => (
+              {['Date', 'Name', 'Email', 'Item', 'Qty', 'Payment', 'Status', ''].map(h => (
                 <th key={h} className="p-3 text-left font-mono text-[10px] uppercase tracking-[0.2em]">{h}</th>
               ))}
             </tr>
@@ -63,6 +63,15 @@ export default function OrdersTab() {
                 <td className="p-3 font-mono text-xs">{o.email}</td>
                 <td className="p-3 font-mono text-xs">{o.product_type}</td>
                 <td className="p-3 font-mono text-xs">{o.quantity ?? '—'}</td>
+                <td className="p-3">
+                  {o.payment_status === 'paid' ? (
+                    <span className="bg-ink text-paper px-2 py-1 font-mono text-[10px] uppercase tracking-[0.15em]">
+                      Paid {o.total_amount ? `· $${o.total_amount.toLocaleString()}` : ''}
+                    </span>
+                  ) : (
+                    <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">—</span>
+                  )}
+                </td>
                 <td className="p-3">
                   <select
                     value={o.status}
@@ -82,7 +91,7 @@ export default function OrdersTab() {
               </tr>
             ))}
             {orders.length === 0 && (
-              <tr><td colSpan={7} className="p-8 text-center font-mono text-xs text-muted-foreground">No orders yet</td></tr>
+              <tr><td colSpan={8} className="p-8 text-center font-mono text-xs text-muted-foreground">No orders yet</td></tr>
             )}
           </tbody>
         </table>
@@ -102,6 +111,8 @@ export default function OrdersTab() {
                 ['Item', viewing.product_type],
                 ['Quantity', viewing.quantity?.toString() ?? '—'],
                 ['Status', STATUS_LABELS[viewing.status]],
+                ['Payment', viewing.payment_status === 'paid' ? `Paid · $${viewing.total_amount?.toLocaleString() ?? '—'} JMD` : '—'],
+                ['PayPal ID', viewing.payment_id ?? '—'],
               ].map(([label, value]) => (
                 <div key={label} className="flex gap-4 border-b border-ink/10 pb-3 last:border-0">
                   <span className="w-24 shrink-0 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{label}</span>

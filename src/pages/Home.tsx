@@ -1,41 +1,49 @@
-import { Link } from "react-router-dom";
-import { ArrowRight, Palette, Truck, Sparkles } from "lucide-react";
-import hero from "@/assets/ss_print_hero_image_resized_900x1050.jpg";
-import workshop from "@/assets/workshop.jpg";
-import tshirt from "@/assets/product-tshirt.jpg";
-import hoodie from "@/assets/product-hoodie.jpg";
-import cap from "@/assets/product-cap.jpg";
-import Marquee from "@/components/Marquee";
-import SectionHeader from "@/components/SectionHeader";
+import { useState, useEffect } from 'react'
+import { Link } from "react-router-dom"
+import { ArrowRight, Palette, Truck, Sparkles } from "lucide-react"
+import hero from "@/assets/ss_print_hero_image_resized_900x1050.jpg"
+import workshop from "@/assets/workshop.jpg"
+import Marquee from "@/components/Marquee"
+import SectionHeader from "@/components/SectionHeader"
+import { supabase, isConfigured } from '@/lib/supabase'
+import type { Product, SiteContent } from '@/lib/db.types'
 
-const featured = [
-  { name: "Custom Tee", price: "from $1,500", img: tshirt },
-  { name: "Heavy Hoodie", price: "from $4,800", img: hoodie },
-  { name: "Dad Cap", price: "from $1,800", img: cap },
-];
+const defaultContent: Omit<SiteContent, 'id'> = {
+  hero_eyebrow: 'Vol. 01 — Spring Press',
+  hero_heading: 'Wear your ideas.',
+  hero_subtext: 'Custom printing & apparel out of Jamaica. From a single tee to a full team kit — we press it sharp, fast, and built to last.',
+  hero_image_url: null,
+  workshop_image_url: null,
+  stats: [
+    { key: '500+', label: 'Pieces Pressed' },
+    { key: '48h', label: 'Avg. Turnaround' },
+    { key: '100%', label: 'Custom' },
+  ],
+  marquee_items: [],
+  contact_phone: '',
+  contact_email: '',
+  contact_hours: '',
+  footer_tagline: '',
+}
 
 const steps = [
-  {
-    n: "01",
-    icon: Palette,
-    title: "Send your idea",
-    body: "Drop us your design, sketch, or just a vibe. We'll mock it up free.",
-  },
-  {
-    n: "02",
-    icon: Sparkles,
-    title: "We press it",
-    body: "Professional heat press on premium garments — built to last.",
-  },
-  {
-    n: "03",
-    icon: Truck,
-    title: "Pickup or delivery",
-    body: "Fast turnaround across the island. One piece or one thousand.",
-  },
-];
+  { n: "01", icon: Palette, title: "Send your idea", body: "Drop us your design, sketch, or just a vibe. We'll mock it up free." },
+  { n: "02", icon: Sparkles, title: "We press it", body: "Professional heat press on premium garments — built to last." },
+  { n: "03", icon: Truck, title: "Pickup or delivery", body: "Fast turnaround across the island. One piece or one thousand." },
+]
 
 const Home = () => {
+  const [content, setContent] = useState(defaultContent)
+  const [featured, setFeatured] = useState<Product[]>([])
+
+  useEffect(() => {
+    if (!isConfigured) return
+    supabase!.from('site_content').select('*').eq('id', 1).single()
+      .then(({ data }) => { if (data) setContent(data) })
+    supabase!.from('products').select('*').eq('active', true).order('order_index').limit(4)
+      .then(({ data }) => { if (data) setFeatured(data) })
+  }, [])
+
   return (
     <>
       {/* HERO */}
@@ -44,18 +52,13 @@ const Home = () => {
           <div className="md:col-span-6 reveal-up">
             <div className="mb-6 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
               <span className="h-px w-8 bg-ink/40" />
-              Vol. 01 — Spring Press
+              {content.hero_eyebrow}
             </div>
             <h1 className="font-display text-[3.2rem] font-black leading-[0.95] tracking-tight md:text-[6.5rem]">
-              Wear
-              <br />
-              your
-              <br />
-              <span className="italic text-stamp">ideas.</span>
+              {content.hero_heading}
             </h1>
             <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">
-              Custom printing & apparel out of Jamaica. From a single tee to a
-              full team kit — we press it sharp, fast, and built to last.
+              {content.hero_subtext}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
@@ -63,10 +66,7 @@ const Home = () => {
                 className="group inline-flex items-center gap-2 bg-ink px-6 py-4 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp"
               >
                 Start a Custom Order
-                <ArrowRight
-                  size={14}
-                  className="transition group-hover:translate-x-1"
-                />
+                <ArrowRight size={14} className="transition group-hover:translate-x-1" />
               </Link>
               <Link
                 to="/shop"
@@ -77,16 +77,10 @@ const Home = () => {
             </div>
 
             <div className="mt-12 flex flex-wrap gap-8 border-t border-ink/15 pt-6">
-              {[
-                ["500+", "Pieces Pressed"],
-                ["48h", "Avg. Turnaround"],
-                ["100%", "Custom"],
-              ].map(([k, v]) => (
-                <div key={k}>
-                  <div className="font-display text-3xl font-bold">{k}</div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                    {v}
-                  </div>
+              {content.stats.map(({ key, label }) => (
+                <div key={key}>
+                  <div className="font-display text-3xl font-bold">{key}</div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{label}</div>
                 </div>
               ))}
             </div>
@@ -98,7 +92,7 @@ const Home = () => {
                 Lookbook · 26
               </div>
               <img
-                src={hero}
+                src={content.hero_image_url ?? hero}
                 alt="Model wearing custom printed tee from Sovereign & Sonata"
                 className="aspect-[4/5] w-full object-cover stamp-border"
                 width={1080}
@@ -115,54 +109,45 @@ const Home = () => {
       <Marquee />
 
       {/* FEATURED */}
-      <section className="container py-20 md:py-28">
-        <div className="mb-12 flex items-end justify-between gap-6">
-          <SectionHeader
-            eyebrow="The Catalogue"
-            title={
-              <>
-                Featured <em className="italic font-normal">pieces.</em>
-              </>
-            }
-          />
-          <Link
-            to="/shop"
-            className="hidden shrink-0 font-mono text-xs uppercase tracking-[0.2em] underline underline-offset-4 hover:text-stamp md:inline"
-          >
-            View all →
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-          {featured.map((p, i) => (
+      {featured.length > 0 && (
+        <section className="container py-20 md:py-28">
+          <div className="mb-12 flex items-end justify-between gap-6">
+            <SectionHeader
+              eyebrow="The Catalogue"
+              title={<>Featured <em className="italic font-normal">pieces.</em></>}
+            />
             <Link
               to="/shop"
-              key={p.name}
-              className="group block"
+              className="hidden shrink-0 font-mono text-xs uppercase tracking-[0.2em] underline underline-offset-4 hover:text-stamp md:inline"
             >
-              <div className="relative overflow-hidden bg-paper-deep">
-                <img
-                  src={p.img}
-                  alt={p.name}
-                  loading="lazy"
-                  className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
-                />
-                <div className="absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.2em]">
-                  №{String(i + 1).padStart(2, "0")}
-                </div>
-              </div>
-              <div className="mt-3 flex items-baseline justify-between">
-                <span className="font-display text-lg font-semibold">
-                  {p.name}
-                </span>
-                <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
-                  {p.price}
-                </span>
-              </div>
+              View all →
             </Link>
-          ))}
-        </div>
-      </section>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+            {featured.map((p) => (
+              <Link to="/shop" key={p.id} className="group block">
+                <div className="relative overflow-hidden bg-paper-deep">
+                  {p.image_url ? (
+                    <img
+                      src={p.image_url}
+                      alt={p.name}
+                      loading="lazy"
+                      className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="aspect-[4/5] w-full bg-paper-deep" />
+                  )}
+                </div>
+                <div className="mt-3 flex items-baseline justify-between">
+                  <span className="font-display text-lg font-semibold">{p.name}</span>
+                  <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{p.price}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* HOW IT WORKS */}
       <section className="bg-ink text-paper">
@@ -174,11 +159,10 @@ const Home = () => {
                 The Process
               </div>
               <h2 className="font-display text-4xl font-bold leading-[1.05] md:text-6xl">
-                From idea to <em className="italic text-stamp">pressed</em> in
-                three steps.
+                From idea to <em className="italic text-stamp">pressed</em> in three steps.
               </h2>
               <img
-                src={workshop}
+                src={content.workshop_image_url ?? workshop}
                 alt="Inside the Sovereign & Sonata workshop"
                 loading="lazy"
                 className="mt-10 aspect-[4/3] w-full object-cover"
@@ -186,19 +170,12 @@ const Home = () => {
             </div>
             <div className="space-y-8 md:col-span-7 md:pl-8">
               {steps.map(({ n, icon: Icon, title, body }) => (
-                <div
-                  key={n}
-                  className="flex gap-6 border-b border-paper/15 pb-8 last:border-b-0"
-                >
-                  <div className="font-display text-5xl font-black text-paper/30 md:text-6xl">
-                    {n}
-                  </div>
+                <div key={n} className="flex gap-6 border-b border-paper/15 pb-8 last:border-b-0">
+                  <div className="font-display text-5xl font-black text-paper/30 md:text-6xl">{n}</div>
                   <div className="flex-1">
                     <div className="mb-3 flex items-center gap-3">
                       <Icon size={18} className="text-stamp" />
-                      <h3 className="font-display text-2xl font-semibold">
-                        {title}
-                      </h3>
+                      <h3 className="font-display text-2xl font-semibold">{title}</h3>
                     </div>
                     <p className="text-paper/70 leading-relaxed">{body}</p>
                   </div>
@@ -221,8 +198,7 @@ const Home = () => {
             <span className="italic">on a hanger.</span>
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
-            Tell us what you have in mind. We'll quote it free, mock it up, and
-            press it sharp.
+            Tell us what you have in mind. We'll quote it free, mock it up, and press it sharp.
           </p>
           <Link
             to="/custom"
@@ -233,7 +209,7 @@ const Home = () => {
         </div>
       </section>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
