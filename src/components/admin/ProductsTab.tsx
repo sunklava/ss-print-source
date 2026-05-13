@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Product } from '@/lib/db.types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Pencil, Trash2, Plus } from 'lucide-react'
+import { Pencil, Trash2, Plus, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 const CATEGORIES = ['Shirts', 'Hoodies', 'Sweaters', 'Jackets', 'Caps']
@@ -13,6 +13,8 @@ export default function ProductsTab() {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<Product | null>(null)
   const [form, setForm] = useState(empty)
+  const [uploading, setUploading] = useState(false)
+  const imgRef = useRef<HTMLInputElement>(null)
 
   const load = async () => {
     const { data } = await supabase!.from('products').select('*').order('order_index')
@@ -55,6 +57,20 @@ export default function ProductsTab() {
   const toggleActive = async (p: Product) => {
     await supabase!.from('products').update({ active: !p.active }).eq('id', p.id)
     load()
+  }
+
+  const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const ext = file.name.split('.').pop()
+    const path = `${Date.now()}.${ext}`
+    const { error } = await supabase!.storage.from('products').upload(path, file)
+    if (error) { toast.error('Upload failed: ' + error.message); setUploading(false); return }
+    const { data: { publicUrl } } = supabase!.storage.from('products').getPublicUrl(path)
+    setForm(f => ({ ...f, image_url: publicUrl }))
+    setUploading(false)
+    if (imgRef.current) imgRef.current.value = ''
   }
 
   const field = (label: string, key: keyof typeof empty, required = false) => (
@@ -125,7 +141,30 @@ export default function ProductsTab() {
           <form onSubmit={save} className="mt-2 space-y-4">
             {field('Name', 'name', true)}
             {field('Price (e.g. $1,500)', 'price', true)}
-            {field('Image URL (optional)', 'image_url')}
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Product Image</label>
+              <input ref={imgRef} type="file" accept="image/*" onChange={uploadImage} className="hidden" />
+              {form.image_url ? (
+                <div className="mt-2 flex items-center gap-3">
+                  <img src={form.image_url} alt="" className="h-16 w-16 object-cover border border-ink/20" />
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => imgRef.current?.click()} disabled={uploading}
+                      className="flex items-center gap-1.5 border border-ink/30 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] transition hover:border-ink disabled:opacity-50">
+                      <Upload size={11} /> {uploading ? 'Uploading…' : 'Replace'}
+                    </button>
+                    <button type="button" onClick={() => setForm(f => ({ ...f, image_url: '' }))}
+                      className="border border-ink/30 p-1.5 transition hover:border-destructive hover:text-destructive">
+                      <X size={11} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button type="button" onClick={() => imgRef.current?.click()} disabled={uploading}
+                  className="mt-2 flex items-center gap-2 border border-ink/20 border-dashed px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:border-ink hover:text-ink disabled:opacity-50 w-full justify-center">
+                  <Upload size={13} /> {uploading ? 'Uploading…' : 'Upload Image'}
+                </button>
+              )}
+            </div>
             {field('Tag (e.g. Bestseller)', 'tag')}
             <div>
               <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Category</label>

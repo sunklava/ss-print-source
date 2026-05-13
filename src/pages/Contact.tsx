@@ -1,37 +1,54 @@
-import SectionHeader from "@/components/SectionHeader";
-import { MessageCircle, Phone, Mail, Clock, MapPin, Instagram } from "lucide-react";
+import { useState, useEffect } from 'react'
+import SectionHeader from "@/components/SectionHeader"
+import { MessageCircle, Phone, Mail, Clock, MapPin, AtSign } from "lucide-react"
+import { supabase, isConfigured } from '@/lib/supabase'
+import type { SiteContent } from '@/lib/db.types'
+
+const defaults = {
+  contact_phone: '+1 (876) 000-0000',
+  contact_email: 'hello@ssprint.jm',
+  contact_hours: 'Mon–Sat · 9am–7pm',
+}
 
 const Contact = () => {
+  const [info, setInfo] = useState(defaults)
+
+  useEffect(() => {
+    if (!isConfigured) return
+    supabase!.from('site_content').select('contact_phone, contact_email, contact_hours').eq('id', 1).single()
+      .then(({ data }) => { if (data) setInfo(data as Pick<SiteContent, 'contact_phone' | 'contact_email' | 'contact_hours'>) })
+  }, [])
+
   const items = [
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      value: "+1 (876) 000-0000",
-      href: "https://wa.me/18760000000",
+      value: info.contact_phone,
+      href: `https://wa.me/${info.contact_phone.replace(/\D/g, '')}`,
       cta: "Chat now",
     },
     {
       icon: Phone,
       label: "Phone",
-      value: "+1 (876) 000-0000",
-      href: "tel:+18760000000",
+      value: info.contact_phone,
+      href: `tel:+${info.contact_phone.replace(/\D/g, '')}`,
       cta: "Call us",
     },
     {
       icon: Mail,
       label: "Email",
-      value: "hello@ssprint.jm",
-      href: "mailto:hello@ssprint.jm",
+      value: info.contact_email,
+      href: `mailto:${info.contact_email}`,
       cta: "Send email",
     },
     {
-      icon: Instagram,
+      icon: AtSign,
       label: "Instagram",
       value: "@ssprint.jm",
       href: "https://instagram.com",
       cta: "Follow",
     },
-  ];
+  ]
 
   return (
     <>
@@ -75,20 +92,7 @@ const Contact = () => {
               <Clock size={18} />
               <h3 className="font-display text-xl font-bold">Hours</h3>
             </div>
-            <ul className="mt-4 space-y-2 font-mono text-sm">
-              <li className="flex justify-between border-b border-ink/10 py-2">
-                <span>Monday – Friday</span>
-                <span>9:00 AM — 7:00 PM</span>
-              </li>
-              <li className="flex justify-between border-b border-ink/10 py-2">
-                <span>Saturday</span>
-                <span>10:00 AM — 5:00 PM</span>
-              </li>
-              <li className="flex justify-between py-2">
-                <span>Sunday</span>
-                <span className="text-muted-foreground">Closed</span>
-              </li>
-            </ul>
+            <p className="mt-4 font-mono text-sm">{info.contact_hours}</p>
           </div>
 
           <div className="border border-ink/20 bg-paper-deep p-6 md:p-8">
@@ -108,7 +112,7 @@ const Contact = () => {
         </div>
       </section>
     </>
-  );
-};
+  )
+}
 
-export default Contact;
+export default Contact
