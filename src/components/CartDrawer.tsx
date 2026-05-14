@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Link } from 'react-router-dom'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 
-const fmt = (n: number) => `$${n.toLocaleString()}`
+const fmt = (n: number) => `$${n.toLocaleString('en-US')}`
 
 export default function CartDrawer() {
   const { items, removeItem, updateQty, total, count, isOpen, setOpen } = useCart()
@@ -69,7 +69,7 @@ export default function CartDrawer() {
                 <span className="font-mono text-xs uppercase tracking-[0.2em]">Total</span>
                 <div className="text-right">
                   <span className="font-display text-2xl font-bold">{fmt(total)}</span>
-                  <span className="ml-1 font-mono text-[10px] text-muted-foreground">JMD</span>
+                  <span className="ml-1 font-mono text-[10px] text-muted-foreground">USD</span>
                 </div>
               </div>
               <Link
