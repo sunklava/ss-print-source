@@ -173,7 +173,7 @@ const Home = () => {
             <div className="space-y-8 md:col-span-7 md:pl-8">
               {steps.map(({ n, icon: Icon, title, body }) => (
                 <div key={n} className="flex gap-6 border-b border-paper/15 pb-8 last:border-b-0">
-                  <div className="font-display text-5xl font-black text-paper/30 md:text-6xl" aria-hidden="true">{n}</div>
+                  <div className="font-display text-5xl font-black text-paper/50 md:text-6xl" aria-hidden="true">{n}</div>
                   <div className="flex-1">
                     <div className="mb-3 flex items-center gap-3">
                       <Icon size={18} className="text-stamp" aria-hidden="true" />
