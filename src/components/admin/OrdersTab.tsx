@@ -37,7 +37,7 @@ export default function OrdersTab() {
     load()
   }
 
-  const fmt = (d: string) => new Date(d).toLocaleDateString('en-JM', { day: 'numeric', month: 'short', year: 'numeric' })
+  const fmt = (d: string) => new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
 
   return (
     <div>
@@ -66,7 +66,7 @@ export default function OrdersTab() {
                 <td className="p-3">
                   {o.payment_status === 'paid' ? (
                     <span className="bg-ink text-paper px-2 py-1 font-mono text-[10px] uppercase tracking-[0.15em]">
-                      Paid {o.total_amount ? `· $${o.total_amount.toLocaleString()}` : ''}
+                      Paid {o.total_amount ? `· $${o.total_amount.toLocaleString('en-US')} USD` : ''}
                     </span>
                   ) : (
                     <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">—</span>
@@ -115,7 +115,7 @@ export default function OrdersTab() {
                 ['Item', viewing.product_type],
                 ['Quantity', viewing.quantity?.toString() ?? '—'],
                 ['Status', STATUS_LABELS[viewing.status]],
-                ['Payment', viewing.payment_status === 'paid' ? `Paid · $${viewing.total_amount?.toLocaleString() ?? '—'} USD` : '—'],
+                ['Payment', viewing.payment_status === 'paid' ? `Paid · $${viewing.total_amount?.toLocaleString('en-US') ?? '—'} USD` : '—'],
                 ['PayPal ID', viewing.payment_id ?? '—'],
               ].map(([label, value]) => (
                 <div key={label} className="flex gap-4 border-b border-ink/10 pb-3 last:border-0">

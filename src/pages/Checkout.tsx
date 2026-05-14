@@ -6,7 +6,7 @@ import { supabase, isConfigured } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { ArrowLeft, Package, Truck } from 'lucide-react'
 
-const fmt = (n: number) => `$${n.toLocaleString()}`
+const fmt = (n: number) => `$${n.toLocaleString('en-US')}`
 
 const US_STATES = [
   'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut',
