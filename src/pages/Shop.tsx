@@ -37,6 +37,7 @@ const Shop = () => {
           eyebrow="Shop the Press"
           title={<>The <em className="italic font-normal">collection.</em></>}
           description="Curated essentials, pressed with precision in our Kingston studio."
+          level={1}
         />
 
         <div

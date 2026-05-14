@@ -57,6 +57,7 @@ const Contact = () => {
           eyebrow="Contact"
           title={<>Let's <em className="italic font-normal">talk shop.</em></>}
           description="The fastest way to reach us is on WhatsApp. We respond during business hours, every day except Sunday."
+          level={1}
         />
 
         <div className="mt-14 grid gap-4 md:grid-cols-2">
@@ -91,7 +92,7 @@ const Contact = () => {
           <div className="border border-ink/20 bg-paper-deep p-6 md:p-8">
             <div className="flex items-center gap-3 text-stamp">
               <Clock size={18} aria-hidden="true" />
-              <h3 className="font-display text-xl font-bold">Hours</h3>
+              <h2 className="font-display text-xl font-bold">Hours</h2>
             </div>
             <p className="mt-4 font-mono text-sm">{info.contact_hours}</p>
           </div>
@@ -99,7 +100,7 @@ const Contact = () => {
           <div className="border border-ink/20 bg-paper-deep p-6 md:p-8">
             <div className="flex items-center gap-3 text-stamp">
               <MapPin size={18} aria-hidden="true" />
-              <h3 className="font-display text-xl font-bold">Location</h3>
+              <h2 className="font-display text-xl font-bold">Location</h2>
             </div>
             <p className="mt-4 leading-relaxed">
               Based in Kingston, Jamaica.

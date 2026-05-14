@@ -17,6 +17,7 @@ const About = () => {
         <SectionHeader
           eyebrow="About"
           title={<>Bringing ideas <em className="italic font-normal">to life,</em> one press at a time.</>}
+          level={1}
         />
 
         <div className="mt-14 grid gap-12 md:grid-cols-12 md:gap-16">
@@ -114,7 +115,7 @@ const About = () => {
                   </span>
                   <div className="flex-1 pt-1">
                     <div className="flex items-center gap-3">
-                      <Check size={18} className="text-stamp" />
+                      <Check size={18} className="text-stamp" aria-hidden="true" />
                       <span className="font-display text-xl font-semibold">
                         {r}
                       </span>

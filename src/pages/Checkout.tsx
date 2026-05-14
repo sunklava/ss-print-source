@@ -190,7 +190,7 @@ function CheckoutInner() {
                 {/* Shipping address — US format */}
                 {deliveryMethod === 'delivery' && (
                   <div className="space-y-5 border-t border-ink/10 pt-6">
-                    <p className="font-display text-base font-semibold">Shipping Address</p>
+                    <h3 className="font-display text-base font-semibold">Shipping Address</h3>
                     <div>
                       <label htmlFor="checkout-address1" className={labelClass}>
                         Street Address <span aria-hidden="true">*</span><span className="sr-only">(required)</span>

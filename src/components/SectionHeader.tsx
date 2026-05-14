@@ -5,6 +5,7 @@ interface SectionHeaderProps {
   title: ReactNode;
   description?: string;
   align?: "left" | "center";
+  level?: 1 | 2 | 3;
 }
 
 const SectionHeader = ({
@@ -12,7 +13,10 @@ const SectionHeader = ({
   title,
   description,
   align = "left",
+  level = 2,
 }: SectionHeaderProps) => {
+  const Heading = `h${level}` as "h1" | "h2" | "h3";
+
   return (
     <div
       className={`max-w-3xl ${
@@ -25,14 +29,14 @@ const SectionHeader = ({
             align === "center" ? "justify-center" : ""
           }`}
         >
-          <span className="h-px w-8 bg-ink/40" />
+          <span className="h-px w-8 bg-ink/40" aria-hidden="true" />
           {eyebrow}
-          <span className="h-px w-8 bg-ink/40" />
+          <span className="h-px w-8 bg-ink/40" aria-hidden="true" />
         </div>
       )}
-      <h2 className="font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
+      <Heading className="font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
         {title}
-      </h2>
+      </Heading>
       {description && (
         <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
           {description}

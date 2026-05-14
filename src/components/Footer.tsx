@@ -65,9 +65,9 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="mb-4 font-mono text-xs uppercase tracking-[0.2em]">
+            <h2 className="mb-4 font-mono text-xs uppercase tracking-[0.2em]">
               Navigate
-            </h4>
+            </h2>
             <ul className="space-y-2 text-sm">
               {["Shop", "Gallery", "About", "Contact"].map((l) => (
                 <li key={l}>
@@ -83,9 +83,9 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="mb-4 font-mono text-xs uppercase tracking-[0.2em]">
+            <h2 className="mb-4 font-mono text-xs uppercase tracking-[0.2em]">
               Reach Us
-            </h4>
+            </h2>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <Phone size={14} aria-hidden="true" />

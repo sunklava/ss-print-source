@@ -28,6 +28,7 @@ const Pricing = () => {
           align="center"
           title={<>Honest pricing. <em className="italic font-normal">No surprises.</em></>}
           description="Transparent base rates. The more you press, the less you pay."
+          level={1}
         />
 
         <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -44,7 +45,7 @@ const Pricing = () => {
                   Most Popular
                 </span>
               )}
-              <h3 id={`tier-${t.id}`} className="font-display text-2xl font-bold">{t.name}</h3>
+              <h2 id={`tier-${t.id}`} className="font-display text-2xl font-bold">{t.name}</h2>
               <p className={`mt-2 text-sm ${t.featured ? "text-paper/70" : "text-muted-foreground"}`}>
                 {t.description}
               </p>
@@ -79,7 +80,7 @@ const Pricing = () => {
 
       {addons.length > 0 && (
         <section className="container pb-20">
-          <h3 className="font-display text-3xl font-bold md:text-4xl">Add-ons & extras</h3>
+          <h2 className="font-display text-3xl font-bold md:text-4xl">Add-ons & extras</h2>
           <div className="mt-8 grid gap-px bg-ink/15 md:grid-cols-2">
             {addons.map((a) => (
               <div key={a.id} className="flex items-center justify-between bg-paper px-6 py-5">

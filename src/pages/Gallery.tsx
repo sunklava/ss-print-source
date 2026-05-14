@@ -18,6 +18,7 @@ const Gallery = () => {
         eyebrow="Gallery"
         title={<>The <em className="italic font-normal">work.</em></>}
         description="A sample of pieces pressed in the studio. Every job, every size, every print."
+        level={1}
       />
 
       {images.length > 0 ? (
