@@ -67,7 +67,7 @@ const Shop = () => {
                     src={p.image_url}
                     alt={p.name}
                     loading="lazy"
-                    className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
+                    className="aspect-[4/5] w-full object-contain p-3 transition duration-700 group-hover:scale-105"
                   />
                 ) : (
                   <div className="aspect-[4/5] w-full bg-paper-deep flex items-center justify-center">
