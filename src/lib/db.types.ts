@@ -4,6 +4,7 @@ export type Product = {
   category: string
   price: string
   image_url: string | null
+  image_position: string | null
   tag: string | null
   order_index: number
   active: boolean

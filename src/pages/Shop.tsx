@@ -68,6 +68,7 @@ const Shop = () => {
                     alt={p.name}
                     loading="lazy"
                     className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
+                    style={{ objectPosition: p.image_position ?? 'center' }}
                   />
                 ) : (
                   <div className="aspect-[4/5] w-full bg-paper-deep flex items-center justify-center">

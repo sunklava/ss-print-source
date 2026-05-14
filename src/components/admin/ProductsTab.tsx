@@ -6,7 +6,7 @@ import { Pencil, Trash2, Plus, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 const CATEGORIES = ['Shirts', 'Hoodies', 'Sweaters', 'Jackets', 'Caps']
-const empty = { name: '', category: 'Shirts', price: '', image_url: '', tag: '', active: true }
+const empty = { name: '', category: 'Shirts', price: '', image_url: '', image_position: '50% 50%', tag: '', active: true }
 
 export default function ProductsTab() {
   const [products, setProducts] = useState<Product[]>([])
@@ -26,13 +26,26 @@ export default function ProductsTab() {
   const openAdd = () => { setEditing(null); setForm(empty); setOpen(true) }
   const openEdit = (p: Product) => {
     setEditing(p)
-    setForm({ name: p.name, category: p.category, price: p.price, image_url: p.image_url ?? '', tag: p.tag ?? '', active: p.active })
+    setForm({
+      name: p.name,
+      category: p.category,
+      price: p.price,
+      image_url: p.image_url ?? '',
+      image_position: p.image_position ?? '50% 50%',
+      tag: p.tag ?? '',
+      active: p.active,
+    })
     setOpen(true)
   }
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault()
-    const payload = { ...form, image_url: form.image_url || null, tag: form.tag || null }
+    const payload = {
+      ...form,
+      image_url: form.image_url || null,
+      image_position: form.image_position || '50% 50%',
+      tag: form.tag || null,
+    }
     if (editing) {
       const { error } = await supabase!.from('products').update(payload).eq('id', editing.id)
       if (error) { toast.error('Failed to update product'); return }
@@ -68,12 +81,19 @@ export default function ProductsTab() {
     const { error } = await supabase!.storage.from('products').upload(path, file)
     if (error) { toast.error('Upload failed: ' + error.message); setUploading(false); return }
     const { data: { publicUrl } } = supabase!.storage.from('products').getPublicUrl(path)
-    setForm(f => ({ ...f, image_url: publicUrl }))
+    setForm(f => ({ ...f, image_url: publicUrl, image_position: '50% 50%' }))
     setUploading(false)
     if (imgRef.current) imgRef.current.value = ''
   }
 
-  const field = (label: string, key: keyof typeof empty, required = false) => (
+  const handleFocalPoint = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = Math.round(((e.clientX - rect.left) / rect.width) * 100)
+    const y = Math.round(((e.clientY - rect.top) / rect.height) * 100)
+    setForm(f => ({ ...f, image_position: `${x}% ${y}%` }))
+  }
+
+  const field = (label: string, key: 'name' | 'price' | 'tag', required = false) => (
     <div key={key}>
       <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{label}</label>
       <input
@@ -84,6 +104,8 @@ export default function ProductsTab() {
       />
     </div>
   )
+
+  const [dotX, dotY] = (form.image_position || '50% 50%').split(' ')
 
   return (
     <div>
@@ -141,18 +163,42 @@ export default function ProductsTab() {
           <form onSubmit={save} className="mt-2 space-y-4">
             {field('Name', 'name', true)}
             {field('Price (e.g. $1,500)', 'price', true)}
+
             <div>
               <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Product Image</label>
               <input ref={imgRef} type="file" accept="image/*" onChange={uploadImage} className="hidden" />
+
               {form.image_url ? (
-                <div className="mt-2 flex items-center gap-3">
-                  <img src={form.image_url} alt="" className="h-16 w-16 object-cover border border-ink/20" />
+                <div className="mt-2 space-y-3">
+                  {/* Focal point picker */}
+                  <div
+                    className="relative aspect-[4/5] w-full cursor-crosshair overflow-hidden border border-ink/20 select-none"
+                    onClick={handleFocalPoint}
+                    title="Click to set crop focus"
+                  >
+                    <img
+                      src={form.image_url}
+                      alt=""
+                      className="h-full w-full object-cover pointer-events-none"
+                      style={{ objectPosition: form.image_position ?? '50% 50%' }}
+                      draggable={false}
+                    />
+                    {/* Focal point dot */}
+                    <div
+                      className="pointer-events-none absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.4)] bg-white/30"
+                      style={{ left: dotX, top: dotY }}
+                    />
+                    <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 bg-ink/70 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.15em] text-paper">
+                      Click to reposition
+                    </div>
+                  </div>
+
                   <div className="flex gap-2">
                     <button type="button" onClick={() => imgRef.current?.click()} disabled={uploading}
-                      className="flex items-center gap-1.5 border border-ink/30 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] transition hover:border-ink disabled:opacity-50">
+                      className="flex flex-1 items-center justify-center gap-1.5 border border-ink/30 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] transition hover:border-ink disabled:opacity-50">
                       <Upload size={11} /> {uploading ? 'Uploading…' : 'Replace'}
                     </button>
-                    <button type="button" onClick={() => setForm(f => ({ ...f, image_url: '' }))}
+                    <button type="button" onClick={() => setForm(f => ({ ...f, image_url: '', image_position: '50% 50%' }))}
                       className="border border-ink/30 p-1.5 transition hover:border-destructive hover:text-destructive">
                       <X size={11} />
                     </button>
@@ -160,11 +206,12 @@ export default function ProductsTab() {
                 </div>
               ) : (
                 <button type="button" onClick={() => imgRef.current?.click()} disabled={uploading}
-                  className="mt-2 flex items-center gap-2 border border-ink/20 border-dashed px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:border-ink hover:text-ink disabled:opacity-50 w-full justify-center">
+                  className="mt-2 flex w-full items-center justify-center gap-2 border border-dashed border-ink/20 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:border-ink hover:text-ink disabled:opacity-50">
                   <Upload size={13} /> {uploading ? 'Uploading…' : 'Upload Image'}
                 </button>
               )}
             </div>
+
             {field('Tag (e.g. Bestseller)', 'tag')}
             <div>
               <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Category</label>
