@@ -1,7 +1,6 @@
 import { NavLink, Link } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, ShoppingBag } from "lucide-react";
-import logo from "../assets/ss-print-header-logo-black.png";
 import { useCart } from "@/lib/cart";
 import CartDrawer from "./CartDrawer";
 
@@ -22,7 +21,7 @@ const Header = () => {
       <header className="sticky top-0 z-50 border-b border-ink/10 bg-paper/85 backdrop-blur-md">
         <div className="container flex h-16 items-center justify-between md:h-20">
           <Link to="/" className="group flex items-center gap-3">
-            <img src={logo} alt="Sovereign & Sonata Logo" className="h-14 w-14 object-cover" />
+            <img src="/favicon.png" alt="Sovereign & Sonata Logo" className="h-14 w-14 object-contain" />
             <span className="font-display text-lg font-bold tracking-tight md:text-xl">
               Sovereign & Sonata
               <span className="ml-2 hidden font-mono text-[10px] font-normal uppercase tracking-[0.2em] text-muted-foreground md:inline">

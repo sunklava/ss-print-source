@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Mail, Phone, MessageCircle } from "lucide-react";
-import logo from "../assets/ss-print-header-logo-black.png";
 import { supabase, isConfigured } from "@/lib/supabase";
 
 const defaults = {
@@ -33,7 +32,7 @@ const Footer = () => {
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="Sovereign & Sonata Logo" className="h-10 w-10 object-cover" />
+              <img src="/favicon.png" alt="Sovereign & Sonata Logo" className="h-10 w-10 object-contain" />
               <span className="font-display text-2xl font-bold">Sovereign & Sonata</span>
             </div>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
