@@ -49,6 +49,11 @@ export type Order = {
   name: string
   email: string
   phone: string | null
+  delivery_method: 'pickup' | 'delivery' | null
+  address_line1: string | null
+  address_city: string | null
+  address_parish: string | null
+  address_postal: string | null
   product_type: string
   details: string
   quantity: number | null

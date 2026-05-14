@@ -4,23 +4,45 @@ import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from '@pa
 import { useCart } from '@/lib/cart'
 import { supabase, isConfigured } from '@/lib/supabase'
 import { toast } from 'sonner'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Package, Truck } from 'lucide-react'
 
 const fmt = (n: number) => `$${n.toLocaleString()}`
+
+const US_STATES = [
+  'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut',
+  'Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa',
+  'Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan',
+  'Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada',
+  'New Hampshire','New Jersey','New Mexico','New York','North Carolina',
+  'North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island',
+  'South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont',
+  'Virginia','Washington','West Virginia','Wisconsin','Wyoming',
+  'Washington D.C.',
+]
 
 const paypalOptions = {
   clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID ?? 'test',
   currency: 'USD',
 }
 
+const inputClass = 'mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink'
+const labelClass = 'font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground'
+
 function CheckoutInner() {
   const { items, total, clearCart } = useCart()
   const navigate = useNavigate()
   const [{ isPending }] = usePayPalScriptReducer()
+  const [step, setStep] = useState<'details' | 'payment'>('details')
+
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [step, setStep] = useState<'details' | 'payment'>('details')
+  const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery')
+  const [addressLine1, setAddressLine1] = useState('')
+  const [addressLine2, setAddressLine2] = useState('')
+  const [addressCity, setAddressCity] = useState('')
+  const [addressState, setAddressState] = useState('New York')
+  const [addressZip, setAddressZip] = useState('')
 
   if (items.length === 0) {
     return (
@@ -39,6 +61,11 @@ function CheckoutInner() {
         name,
         email,
         phone: phone || null,
+        delivery_method: deliveryMethod,
+        address_line1: deliveryMethod === 'delivery' ? addressLine1 : null,
+        address_city: deliveryMethod === 'delivery' ? (addressLine2 ? `${addressLine2}, ${addressCity}` : addressCity) || null : null,
+        address_parish: deliveryMethod === 'delivery' ? addressState : null,
+        address_postal: deliveryMethod === 'delivery' ? addressZip || null : null,
         product_type: items.map(i => i.name).join(', '),
         quantity: items.reduce((s, i) => s + i.quantity, 0),
         details: items.map(i => `${i.name} x${i.quantity} @ ${i.priceDisplay}`).join('\n'),
@@ -50,9 +77,13 @@ function CheckoutInner() {
       })
     }
     clearCart()
-    toast.success('Order confirmed! We\'ll be in touch shortly.')
+    toast.success("Order confirmed! We'll be in touch shortly.")
     navigate('/')
   }
+
+  const formattedAddress = deliveryMethod === 'delivery'
+    ? [addressLine1, addressLine2, addressCity, addressState, addressZip].filter(Boolean).join(', ')
+    : 'Studio Pickup'
 
   return (
     <section className="container py-16 md:py-24">
@@ -72,7 +103,7 @@ function CheckoutInner() {
                 {item.image_url ? (
                   <img src={item.image_url} alt={item.name} className="h-16 w-12 shrink-0 object-cover bg-paper-deep" />
                 ) : (
-                  <div className="h-16 w-12 shrink-0 bg-paper-deep" />
+                  <div className="h-16 w-12 shrink-0 bg-paper-deep" aria-hidden="true" />
                 )}
                 <div className="flex flex-1 items-start justify-between gap-2">
                   <div>
@@ -99,28 +130,104 @@ function CheckoutInner() {
           {step === 'details' ? (
             <>
               <h2 className="font-display text-xl font-bold mb-6 pb-2 border-b border-ink/15">Your Details</h2>
-              <form onSubmit={e => { e.preventDefault(); setStep('payment') }} className="space-y-5" aria-label="Your details">
-                <div>
-                  <label htmlFor="checkout-name" className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                    Full Name <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
-                  </label>
-                  <input id="checkout-name" required aria-required="true" value={name} onChange={e => setName(e.target.value)}
-                    className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink" />
+              <form onSubmit={e => { e.preventDefault(); setStep('payment') }} className="space-y-6" aria-label="Your details">
+
+                {/* Contact info */}
+                <div className="space-y-5">
+                  <div>
+                    <label htmlFor="checkout-name" className={labelClass}>
+                      Full Name <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                    </label>
+                    <input id="checkout-name" required aria-required="true" value={name} onChange={e => setName(e.target.value)} className={inputClass} />
+                  </div>
+                  <div>
+                    <label htmlFor="checkout-email" className={labelClass}>
+                      Email <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                    </label>
+                    <input id="checkout-email" required aria-required="true" type="email" value={email} onChange={e => setEmail(e.target.value)} className={inputClass} />
+                  </div>
+                  <div>
+                    <label htmlFor="checkout-phone" className={labelClass}>
+                      Phone <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                    </label>
+                    <input id="checkout-phone" required aria-required="true" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="(555) 000-0000" className={inputClass} />
+                  </div>
                 </div>
+
+                {/* Delivery method */}
                 <div>
-                  <label htmlFor="checkout-email" className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                    Email <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
-                  </label>
-                  <input id="checkout-email" required aria-required="true" type="email" value={email} onChange={e => setEmail(e.target.value)}
-                    className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink" />
+                  <p className={labelClass + ' mb-3'}>
+                    Fulfillment <span aria-hidden="true">*</span>
+                  </p>
+                  <div className="grid grid-cols-2 gap-3" role="group" aria-label="Choose fulfillment method">
+                    {([
+                      { value: 'delivery', icon: Truck,   title: 'Ship to me',  desc: 'Delivered to your door' },
+                      { value: 'pickup',   icon: Package, title: 'Studio Pickup', desc: 'Collect from Kingston, JA' },
+                    ] as const).map(({ value, icon: Icon, title, desc }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setDeliveryMethod(value)}
+                        aria-pressed={deliveryMethod === value}
+                        className={`flex flex-col items-start gap-2 border p-4 text-left transition ${
+                          deliveryMethod === value
+                            ? 'border-ink bg-ink text-paper'
+                            : 'border-ink/20 hover:border-ink'
+                        }`}
+                      >
+                        <Icon size={16} aria-hidden="true" />
+                        <div>
+                          <div className="font-mono text-xs uppercase tracking-[0.2em]">{title}</div>
+                          <div className={`font-mono text-[10px] mt-0.5 ${deliveryMethod === value ? 'text-paper/70' : 'text-muted-foreground'}`}>
+                            {desc}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div>
-                  <label htmlFor="checkout-phone" className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Phone (optional)</label>
-                  <input id="checkout-phone" value={phone} onChange={e => setPhone(e.target.value)}
-                    className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink" />
-                </div>
-                <button type="submit"
-                  className="w-full bg-ink py-3.5 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp">
+
+                {/* Shipping address — US format */}
+                {deliveryMethod === 'delivery' && (
+                  <div className="space-y-5 border-t border-ink/10 pt-6">
+                    <p className="font-display text-base font-semibold">Shipping Address</p>
+                    <div>
+                      <label htmlFor="checkout-address1" className={labelClass}>
+                        Street Address <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                      </label>
+                      <input id="checkout-address1" required aria-required="true" value={addressLine1} onChange={e => setAddressLine1(e.target.value)} placeholder="123 Main St" className={inputClass} />
+                    </div>
+                    <div>
+                      <label htmlFor="checkout-address2" className={labelClass}>Apt, Suite, Unit (optional)</label>
+                      <input id="checkout-address2" value={addressLine2} onChange={e => setAddressLine2(e.target.value)} placeholder="Apt 4B" className={inputClass} />
+                    </div>
+                    <div>
+                      <label htmlFor="checkout-city" className={labelClass}>
+                        City <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                      </label>
+                      <input id="checkout-city" required aria-required="true" value={addressCity} onChange={e => setAddressCity(e.target.value)} className={inputClass} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="checkout-state" className={labelClass}>
+                          State <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                        </label>
+                        <select id="checkout-state" required aria-required="true" value={addressState} onChange={e => setAddressState(e.target.value)}
+                          className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink">
+                          {US_STATES.map(s => <option key={s}>{s}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="checkout-zip" className={labelClass}>
+                          ZIP Code <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                        </label>
+                        <input id="checkout-zip" required aria-required="true" value={addressZip} onChange={e => setAddressZip(e.target.value)} placeholder="10001" maxLength={10} className={inputClass} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <button type="submit" className="w-full bg-ink py-3.5 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp">
                   Continue to Payment
                 </button>
               </form>
@@ -128,17 +235,22 @@ function CheckoutInner() {
           ) : (
             <>
               <h2 className="font-display text-xl font-bold mb-6 pb-2 border-b border-ink/15">Payment</h2>
+
               <div className="mb-6 border border-ink/15 p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Name</span>
-                  <span>{name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Email</span>
-                  <span>{email}</span>
-                </div>
+                {([
+                  ['Name', name],
+                  ['Email', email],
+                  ['Phone', phone],
+                  ['Fulfillment', deliveryMethod === 'pickup' ? 'Studio Pickup' : 'Ship to me'],
+                  ...(deliveryMethod === 'delivery' ? [['Ship to', formattedAddress]] : []),
+                ] as [string, string][]).map(([label, value]) => (
+                  <div key={label} className="flex justify-between gap-4">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground shrink-0">{label}</span>
+                    <span className="text-right text-sm">{value}</span>
+                  </div>
+                ))}
                 <button onClick={() => setStep('details')}
-                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-2 transition hover:text-ink">
+                  className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground underline underline-offset-2 transition hover:text-ink">
                   Edit details
                 </button>
               </div>
@@ -154,10 +266,7 @@ function CheckoutInner() {
                     actions.order.create({
                       intent: 'CAPTURE',
                       purchase_units: [{
-                        amount: {
-                          currency_code: 'USD',
-                          value: total.toFixed(2),
-                        },
+                        amount: { currency_code: 'USD', value: total.toFixed(2) },
                         description: items.map(i => `${i.name} x${i.quantity}`).join(', '),
                       }],
                     })

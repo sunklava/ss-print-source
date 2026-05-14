@@ -108,10 +108,14 @@ export default function OrdersTab() {
                 ['Date', fmt(viewing.created_at)],
                 ['Email', viewing.email],
                 ['Phone', viewing.phone ?? '—'],
+                ['Fulfillment', viewing.delivery_method === 'pickup' ? 'Studio Pickup' : viewing.delivery_method === 'delivery' ? 'Ship to me' : '—'],
+                ...(viewing.delivery_method === 'delivery' ? [
+                  ['Ship to', [viewing.address_line1, viewing.address_city, viewing.address_parish, viewing.address_postal].filter(Boolean).join(', ') || '—'],
+                ] : []),
                 ['Item', viewing.product_type],
                 ['Quantity', viewing.quantity?.toString() ?? '—'],
                 ['Status', STATUS_LABELS[viewing.status]],
-                ['Payment', viewing.payment_status === 'paid' ? `Paid · $${viewing.total_amount?.toLocaleString() ?? '—'} JMD` : '—'],
+                ['Payment', viewing.payment_status === 'paid' ? `Paid · $${viewing.total_amount?.toLocaleString() ?? '—'} USD` : '—'],
                 ['PayPal ID', viewing.payment_id ?? '—'],
               ].map(([label, value]) => (
                 <div key={label} className="flex gap-4 border-b border-ink/10 pb-3 last:border-0">
