@@ -40,7 +40,7 @@ const Home = () => {
     if (!isConfigured) return
     supabase!.from('site_content').select('*').eq('id', 1).single()
       .then(({ data }) => { if (data) setContent(data) })
-    supabase!.from('products').select('*').eq('active', true).order('order_index').limit(4)
+    supabase!.from('products').select('*').eq('active', true).eq('featured', true).order('order_index')
       .then(({ data }) => { if (data) setFeatured(data) })
   }, [])
 

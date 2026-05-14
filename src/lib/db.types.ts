@@ -8,6 +8,7 @@ export type Product = {
   tag: string | null
   order_index: number
   active: boolean
+  featured: boolean
 }
 
 export type PricingTier = {

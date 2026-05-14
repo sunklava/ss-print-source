@@ -6,7 +6,7 @@ import { Pencil, Trash2, Plus, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 const CATEGORIES = ['Shirts', 'Hoodies', 'Sweaters', 'Jackets', 'Caps']
-const empty = { name: '', category: 'Shirts', price: '', image_url: '', image_position: '50% 50%', tag: '', active: true }
+const empty = { name: '', category: 'Shirts', price: '', image_url: '', image_position: '50% 50%', tag: '', active: true, featured: false }
 
 export default function ProductsTab() {
   const [products, setProducts] = useState<Product[]>([])
@@ -34,6 +34,7 @@ export default function ProductsTab() {
       image_position: p.image_position ?? '50% 50%',
       tag: p.tag ?? '',
       active: p.active,
+      featured: p.featured,
     })
     setOpen(true)
   }
@@ -69,6 +70,11 @@ export default function ProductsTab() {
 
   const toggleActive = async (p: Product) => {
     await supabase!.from('products').update({ active: !p.active }).eq('id', p.id)
+    load()
+  }
+
+  const toggleFeatured = async (p: Product) => {
+    await supabase!.from('products').update({ featured: !p.featured }).eq('id', p.id)
     load()
   }
 
@@ -120,7 +126,7 @@ export default function ProductsTab() {
         <table className="w-full text-sm">
           <thead className="bg-paper-deep">
             <tr className="border-b border-ink/15">
-              {['Name', 'Category', 'Price', 'Tag', 'Status', ''].map(h => (
+              {['Name', 'Category', 'Price', 'Tag', 'Featured', 'Status', ''].map(h => (
                 <th key={h} className="p-3 text-left font-mono text-[10px] uppercase tracking-[0.2em]">{h}</th>
               ))}
             </tr>
@@ -132,6 +138,14 @@ export default function ProductsTab() {
                 <td className="p-3 font-mono text-xs">{p.category}</td>
                 <td className="p-3 font-mono text-xs">{p.price}</td>
                 <td className="p-3 font-mono text-xs text-muted-foreground">{p.tag ?? '—'}</td>
+                <td className="p-3">
+                  <button
+                    onClick={() => toggleFeatured(p)}
+                    className={`px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] transition ${p.featured ? 'bg-stamp text-paper' : 'border border-ink/30 text-muted-foreground hover:border-ink'}`}
+                  >
+                    {p.featured ? 'Yes' : 'No'}
+                  </button>
+                </td>
                 <td className="p-3">
                   <button
                     onClick={() => toggleActive(p)}
@@ -149,7 +163,7 @@ export default function ProductsTab() {
               </tr>
             ))}
             {products.length === 0 && (
-              <tr><td colSpan={6} className="p-8 text-center text-muted-foreground font-mono text-xs">No products yet</td></tr>
+              <tr><td colSpan={7} className="p-8 text-center text-muted-foreground font-mono text-xs">No products yet</td></tr>
             )}
           </tbody>
         </table>
@@ -222,6 +236,16 @@ export default function ProductsTab() {
               >
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
+            </div>
+            <div className="flex items-center justify-between border border-ink/15 p-3">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Feature on homepage</span>
+              <button
+                type="button"
+                onClick={() => setForm(f => ({ ...f, featured: !f.featured }))}
+                className={`px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] transition ${form.featured ? 'bg-stamp text-paper' : 'border border-ink/30 text-muted-foreground hover:border-ink'}`}
+              >
+                {form.featured ? 'Yes' : 'No'}
+              </button>
             </div>
             <button type="submit" className="w-full bg-ink py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp">
               {editing ? 'Save Changes' : 'Add Product'}
