@@ -156,7 +156,7 @@ export default function ProductsTab() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display">{editing ? 'Edit Product' : 'Add Product'}</DialogTitle>
           </DialogHeader>
