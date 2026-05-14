@@ -21,14 +21,14 @@ const Gallery = () => {
       />
 
       {images.length > 0 ? (
-        <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+        <div className="mt-12 columns-2 gap-3 md:columns-3 md:gap-4 lg:columns-4">
           {images.map((img) => (
-            <figure key={img.id} className="group relative overflow-hidden bg-paper-deep m-0">
+            <figure key={img.id} className="group relative mb-3 break-inside-avoid overflow-hidden bg-paper-deep md:mb-4 m-0">
               <img
                 src={img.image_url}
                 alt={img.caption ?? 'Gallery piece pressed at Sovereign & Sonata'}
                 loading="lazy"
-                className="aspect-square w-full object-cover transition duration-700 group-hover:scale-105"
+                className="w-full object-cover transition duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-ink/0 transition group-hover:bg-ink/30" aria-hidden="true" />
               {img.caption && (
