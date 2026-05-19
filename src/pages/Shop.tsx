@@ -1,33 +1,123 @@
 import { useState, useEffect } from 'react'
 import SectionHeader from "@/components/SectionHeader"
 import { supabase, isConfigured } from '@/lib/supabase'
-import type { Product } from '@/lib/db.types'
+import type { Product, ProductColor } from '@/lib/db.types'
 import { useCart, parsePrice } from '@/lib/cart'
 import { ShoppingBag } from 'lucide-react'
 
+type ColorsByProduct = Record<string, ProductColor[]>
+
+function ProductCard({ p, colors, onAddToCart }: {
+  p: Product
+  colors: ProductColor[]
+  onAddToCart: (id: string, name: string, price: number, priceDisplay: string, image_url: string | null, category: string) => void
+}) {
+  const [selectedColor, setSelectedColor] = useState<ProductColor | null>(colors[0] ?? null)
+  const [hoverColor, setHoverColor] = useState<ProductColor | null>(null)
+
+  const activeColor = hoverColor ?? selectedColor
+  const displayImage = (activeColor?.image_url) ?? p.image_url
+  const displayPosition = (activeColor?.image_position) ?? p.image_position
+
+  const handleAddToCart = () => {
+    const cartId = selectedColor ? `${p.id}-${selectedColor.id}` : p.id
+    const cartName = selectedColor ? selectedColor.name : p.name
+    const cartImage = selectedColor?.image_url ?? p.image_url
+    onAddToCart(cartId, cartName, parsePrice(p.price), p.price, cartImage, p.category)
+  }
+
+  return (
+    <div className="group">
+      <div className="relative overflow-hidden bg-paper-deep">
+        {displayImage ? (
+          <img
+            src={displayImage}
+            alt={activeColor ? activeColor.name : p.name}
+            loading="lazy"
+            className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105"
+            style={{ objectPosition: displayPosition ?? 'center' }}
+          />
+        ) : (
+          <div className="aspect-[4/5] w-full bg-paper-deep flex items-center justify-center">
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              No image
+            </span>
+          </div>
+        )}
+        {p.tag && (
+          <span className="absolute left-3 top-3 bg-ink px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-paper">
+            {p.tag}
+          </span>
+        )}
+        <button
+          onClick={handleAddToCart}
+          aria-label={`Add ${selectedColor ? selectedColor.name : p.name} to cart`}
+          className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-2 translate-y-2 bg-paper py-3 font-mono text-[11px] uppercase tracking-[0.2em] opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-ink hover:text-paper focus:translate-y-0 focus:opacity-100"
+        >
+          <ShoppingBag size={12} aria-hidden="true" /> Add to Cart
+        </button>
+      </div>
+      <div className="mt-3">
+        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          {p.category}
+        </div>
+        <div className="mt-1 flex items-baseline justify-between">
+          <span className="font-display text-lg font-semibold">{p.name}</span>
+          <span className="font-mono text-xs">{p.price}</span>
+        </div>
+        {colors.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {colors.map(c => (
+              <button
+                key={c.id}
+                onMouseEnter={() => setHoverColor(c)}
+                onMouseLeave={() => setHoverColor(null)}
+                onClick={() => setSelectedColor(c)}
+                className={`font-mono text-[10px] uppercase tracking-[0.1em] px-2 py-1 transition border ${
+                  selectedColor?.id === c.id
+                    ? 'bg-ink text-paper border-ink'
+                    : 'border-ink/20 hover:border-ink'
+                }`}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 const Shop = () => {
   const [products, setProducts] = useState<Product[]>([])
+  const [colorsByProduct, setColorsByProduct] = useState<ColorsByProduct>({})
   const [active, setActive] = useState("All")
   const { addItem } = useCart()
 
   useEffect(() => {
     if (!isConfigured) return
-    supabase!.from('products').select('*').eq('active', true).order('order_index')
-      .then(({ data }) => { if (data) setProducts(data) })
+    Promise.all([
+      supabase!.from('products').select('*').eq('active', true).order('order_index'),
+      supabase!.from('product_colors').select('*').order('order_index'),
+    ]).then(([{ data: prods }, { data: cols }]) => {
+      if (prods) setProducts(prods)
+      if (cols) {
+        const map: ColorsByProduct = {}
+        for (const c of cols as ProductColor[]) {
+          if (!map[c.product_id]) map[c.product_id] = []
+          map[c.product_id].push(c)
+        }
+        setColorsByProduct(map)
+      }
+    })
   }, [])
 
   const cats = ["All", ...Array.from(new Set(products.map(p => p.category)))]
   const list = active === "All" ? products : products.filter(p => p.category === active)
 
-  const handleAddToCart = (p: Product) => {
-    addItem({
-      id: p.id,
-      name: p.name,
-      price: parsePrice(p.price),
-      priceDisplay: p.price,
-      image_url: p.image_url,
-      category: p.category,
-    })
+  const handleAddToCart = (id: string, name: string, price: number, priceDisplay: string, image_url: string | null, category: string) => {
+    addItem({ id, name, price, priceDisplay, image_url, category })
   }
 
   return (
@@ -61,46 +151,12 @@ const Shop = () => {
 
         <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-8 lg:grid-cols-4">
           {list.map((p) => (
-            <div key={p.id} className="group">
-              <div className="relative overflow-hidden bg-paper-deep">
-                {p.image_url ? (
-                  <img
-                    src={p.image_url}
-                    alt={p.name}
-                    loading="lazy"
-                    className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
-                    style={{ objectPosition: p.image_position ?? 'center' }}
-                  />
-                ) : (
-                  <div className="aspect-[4/5] w-full bg-paper-deep flex items-center justify-center">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                      No image
-                    </span>
-                  </div>
-                )}
-                {p.tag && (
-                  <span className="absolute left-3 top-3 bg-ink px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-paper">
-                    {p.tag}
-                  </span>
-                )}
-                <button
-                  onClick={() => handleAddToCart(p)}
-                  aria-label={`Add ${p.name} to cart`}
-                  className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-2 translate-y-2 bg-paper py-3 font-mono text-[11px] uppercase tracking-[0.2em] opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-ink hover:text-paper focus:translate-y-0 focus:opacity-100"
-                >
-                  <ShoppingBag size={12} aria-hidden="true" /> Add to Cart
-                </button>
-              </div>
-              <div className="mt-3">
-                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                  {p.category}
-                </div>
-                <div className="mt-1 flex items-baseline justify-between">
-                  <span className="font-display text-lg font-semibold">{p.name}</span>
-                  <span className="font-mono text-xs">{p.price}</span>
-                </div>
-              </div>
-            </div>
+            <ProductCard
+              key={p.id}
+              p={p}
+              colors={colorsByProduct[p.id] ?? []}
+              onAddToCart={handleAddToCart}
+            />
           ))}
           {list.length === 0 && (
             <p className="col-span-full py-16 text-center font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">

@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
-import type { Product } from '@/lib/db.types'
+import type { Product, ProductColor } from '@/lib/db.types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Pencil, Trash2, Plus, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 const CATEGORIES = ['Shirts', 'Hoodies', 'Sweaters', 'Jackets', 'Caps']
 const empty = { name: '', category: 'Shirts', price: '', image_url: '', image_position: '50% 50%', tag: '', active: true, featured: false }
+
+type DraftColor = { id?: string; name: string; image_url: string; image_position: string }
 
 export default function ProductsTab() {
   const [products, setProducts] = useState<Product[]>([])
@@ -16,6 +18,11 @@ export default function ProductsTab() {
   const [uploading, setUploading] = useState(false)
   const imgRef = useRef<HTMLInputElement>(null)
 
+  const [colors, setColors] = useState<DraftColor[]>([])
+  const [uploadingColorIdx, setUploadingColorIdx] = useState<number | null>(null)
+  const colorImgRef = useRef<HTMLInputElement>(null)
+  const pendingColorIdx = useRef<number | null>(null)
+
   const load = async () => {
     const { data } = await supabase!.from('products').select('*').order('order_index')
     setProducts(data ?? [])
@@ -23,8 +30,14 @@ export default function ProductsTab() {
 
   useEffect(() => { load() }, [])
 
-  const openAdd = () => { setEditing(null); setForm(empty); setOpen(true) }
-  const openEdit = (p: Product) => {
+  const openAdd = () => {
+    setEditing(null)
+    setForm(empty)
+    setColors([])
+    setOpen(true)
+  }
+
+  const openEdit = async (p: Product) => {
     setEditing(p)
     setForm({
       name: p.name,
@@ -36,6 +49,13 @@ export default function ProductsTab() {
       active: p.active,
       featured: p.featured,
     })
+    const { data } = await supabase!.from('product_colors').select('*').eq('product_id', p.id).order('order_index')
+    setColors((data ?? []).map((c: ProductColor) => ({
+      id: c.id,
+      name: c.name,
+      image_url: c.image_url ?? '',
+      image_position: c.image_position ?? '50% 50%',
+    })))
     setOpen(true)
   }
 
@@ -47,16 +67,37 @@ export default function ProductsTab() {
       image_position: form.image_position || '50% 50%',
       tag: form.tag || null,
     }
+
+    let productId: string
+
     if (editing) {
       const { error } = await supabase!.from('products').update(payload).eq('id', editing.id)
       if (error) { toast.error('Failed to update product'); return }
+      productId = editing.id
       toast.success('Product updated')
     } else {
       const next = products.length ? Math.max(...products.map(p => p.order_index)) + 1 : 1
-      const { error } = await supabase!.from('products').insert({ ...payload, order_index: next })
-      if (error) { toast.error('Failed to add product'); return }
+      const { data, error } = await supabase!.from('products').insert({ ...payload, order_index: next }).select('id').single()
+      if (error || !data) { toast.error('Failed to add product'); return }
+      productId = data.id
       toast.success('Product added')
     }
+
+    // Sync colours: replace all
+    await supabase!.from('product_colors').delete().eq('product_id', productId)
+    const validColors = colors.filter(c => c.name.trim())
+    if (validColors.length > 0) {
+      await supabase!.from('product_colors').insert(
+        validColors.map((c, i) => ({
+          product_id: productId,
+          name: c.name.trim(),
+          image_url: c.image_url || null,
+          image_position: c.image_position || '50% 50%',
+          order_index: i,
+        }))
+      )
+    }
+
     setOpen(false)
     load()
   }
@@ -90,6 +131,22 @@ export default function ProductsTab() {
     setForm(f => ({ ...f, image_url: publicUrl, image_position: '50% 50%' }))
     setUploading(false)
     if (imgRef.current) imgRef.current.value = ''
+  }
+
+  const uploadColorImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    const idx = pendingColorIdx.current
+    if (!file || idx === null) return
+    setUploadingColorIdx(idx)
+    const ext = file.name.split('.').pop()
+    const path = `color-${Date.now()}.${ext}`
+    const { error } = await supabase!.storage.from('products').upload(path, file)
+    if (error) { toast.error('Upload failed: ' + error.message); setUploadingColorIdx(null); return }
+    const { data: { publicUrl } } = supabase!.storage.from('products').getPublicUrl(path)
+    setColors(prev => prev.map((c, i) => i === idx ? { ...c, image_url: publicUrl, image_position: '50% 50%' } : c))
+    setUploadingColorIdx(null)
+    pendingColorIdx.current = null
+    if (colorImgRef.current) colorImgRef.current.value = ''
   }
 
   const handleFocalPoint = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -184,7 +241,6 @@ export default function ProductsTab() {
 
               {form.image_url ? (
                 <div className="mt-2 space-y-3">
-                  {/* Focal point picker */}
                   <div
                     className="relative aspect-[4/5] w-full cursor-crosshair overflow-hidden border border-ink/20 select-none"
                     onClick={handleFocalPoint}
@@ -197,7 +253,6 @@ export default function ProductsTab() {
                       style={{ objectPosition: form.image_position ?? '50% 50%' }}
                       draggable={false}
                     />
-                    {/* Focal point dot */}
                     <div
                       className="pointer-events-none absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.4)] bg-white/30"
                       style={{ left: dotX, top: dotY }}
@@ -224,6 +279,74 @@ export default function ProductsTab() {
                   <Upload size={13} /> {uploading ? 'Uploading…' : 'Upload Image'}
                 </button>
               )}
+            </div>
+
+            {/* Colour options */}
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Colour Options</label>
+              <input ref={colorImgRef} type="file" accept="image/*" onChange={uploadColorImage} className="hidden" />
+              <div className="mt-2 space-y-2">
+                {colors.map((c, i) => (
+                  <div key={i} className="border border-ink/15 p-3 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <input
+                        value={c.name}
+                        onChange={e => setColors(prev => prev.map((col, j) => j === i ? { ...col, name: e.target.value } : col))}
+                        placeholder="e.g. Blue T-shirt"
+                        className="flex-1 border-b border-ink/30 bg-transparent py-1 text-sm outline-none focus:border-ink"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setColors(prev => prev.filter((_, j) => j !== i))}
+                        className="text-muted-foreground transition hover:text-destructive"
+                      >
+                        <X size={13} />
+                      </button>
+                    </div>
+                    {c.image_url ? (
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={c.image_url}
+                          alt={c.name}
+                          className="h-12 w-10 shrink-0 object-cover border border-ink/20"
+                          style={{ objectPosition: c.image_position ?? '50% 50%' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => { pendingColorIdx.current = i; colorImgRef.current?.click() }}
+                          disabled={uploadingColorIdx === i}
+                          className="border border-ink/30 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] transition hover:border-ink disabled:opacity-50"
+                        >
+                          {uploadingColorIdx === i ? 'Uploading…' : 'Replace'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setColors(prev => prev.map((col, j) => j === i ? { ...col, image_url: '', image_position: '50% 50%' } : col))}
+                          className="text-muted-foreground transition hover:text-destructive"
+                        >
+                          <X size={11} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => { pendingColorIdx.current = i; colorImgRef.current?.click() }}
+                        disabled={uploadingColorIdx === i}
+                        className="flex items-center gap-1.5 border border-dashed border-ink/20 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:border-ink hover:text-ink disabled:opacity-50"
+                      >
+                        <Upload size={11} /> {uploadingColorIdx === i ? 'Uploading…' : 'Upload image'}
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setColors(prev => [...prev, { name: '', image_url: '', image_position: '50% 50%' }])}
+                  className="flex w-full items-center justify-center gap-2 border border-dashed border-ink/20 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:border-ink hover:text-ink"
+                >
+                  <Plus size={11} /> Add colour option
+                </button>
+              </div>
             </div>
 
             {field('Tag (e.g. Bestseller)', 'tag')}

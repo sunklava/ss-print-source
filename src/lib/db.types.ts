@@ -65,6 +65,15 @@ export type Order = {
   items: unknown | null
 }
 
+export type ProductColor = {
+  id: string
+  product_id: string
+  name: string
+  image_url: string | null
+  image_position: string | null
+  order_index: number
+}
+
 export type GalleryImage = {
   id: string
   image_url: string
