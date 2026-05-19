@@ -15,6 +15,7 @@ function ProductCard({ p, colors, onAddToCart }: {
   // null = base product image selected
   const [selectedColor, setSelectedColor] = useState<ProductColor | null>(null)
   const [hoverColor, setHoverColor] = useState<ProductColor | null>(null)
+  const [hoverDefault, setHoverDefault] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -24,6 +25,7 @@ function ProductCard({ p, colors, onAddToCart }: {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false)
         setHoverColor(null)
+        setHoverDefault(false)
       }
     }
     document.addEventListener('mousedown', handler)
@@ -32,7 +34,8 @@ function ProductCard({ p, colors, onAddToCart }: {
 
   const defaultOptionLabel = p.default_option_name ?? p.name
 
-  const activeColor = hoverColor ?? selectedColor
+  // hoverDefault overrides everything — shows base product image even when a colour is selected
+  const activeColor = hoverDefault ? null : (hoverColor ?? selectedColor)
   const displayImage = activeColor?.image_url ?? p.image_url
   const displayPosition = activeColor?.image_position ?? p.image_position
   const displayLabel = selectedColor?.name ?? defaultOptionLabel
@@ -47,6 +50,7 @@ function ProductCard({ p, colors, onAddToCart }: {
   const selectColor = (c: ProductColor | null) => {
     setSelectedColor(c)
     setHoverColor(null)
+    setHoverDefault(false)
     setDropdownOpen(false)
   }
 
@@ -108,7 +112,8 @@ function ProductCard({ p, colors, onAddToCart }: {
                 {/* Default / base image option */}
                 <button
                   type="button"
-                  onMouseEnter={() => setHoverColor(null)}
+                  onMouseEnter={() => { setHoverDefault(true); setHoverColor(null) }}
+                  onMouseLeave={() => setHoverDefault(false)}
                   onClick={() => selectColor(null)}
                   className={`w-full px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.1em] transition ${
                     !selectedColor ? 'bg-ink text-paper' : 'hover:bg-paper-deep'
