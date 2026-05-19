@@ -11,7 +11,7 @@ const GENDERS = [
   { value: 'men',    label: "Men's" },
   { value: 'women',  label: "Women's" },
 ] as const
-const empty = { name: '', category: 'Shirts', gender: 'unisex' as 'men' | 'women' | 'unisex', price: '', image_url: '', image_position: '50% 50%', tag: '', active: true, featured: false }
+const empty = { name: '', category: 'Shirts', gender: 'unisex' as 'men' | 'women' | 'unisex', price: '', image_url: '', image_position: '50% 50%', tag: '', default_option_name: '', active: true, featured: false }
 
 type DraftColor = { id?: string; name: string; image_url: string; image_position: string }
 
@@ -52,6 +52,7 @@ export default function ProductsTab() {
       image_url: p.image_url ?? '',
       image_position: p.image_position ?? '50% 50%',
       tag: p.tag ?? '',
+      default_option_name: p.default_option_name ?? '',
       active: p.active,
       featured: p.featured,
     })
@@ -72,6 +73,7 @@ export default function ProductsTab() {
       image_url: form.image_url || null,
       image_position: form.image_position || '50% 50%',
       tag: form.tag || null,
+      default_option_name: form.default_option_name || null,
     }
 
     let productId: string
@@ -292,7 +294,19 @@ export default function ProductsTab() {
             <div>
               <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Colour Options</label>
               <input ref={colorImgRef} type="file" accept="image/*" onChange={uploadColorImage} className="hidden" />
-              <div className="mt-2 max-h-64 overflow-y-auto space-y-2 pr-1">
+
+              <div className="mt-2 mb-3">
+                <label className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground/70">Default option name</label>
+                <input
+                  value={form.default_option_name}
+                  onChange={e => setForm(f => ({ ...f, default_option_name: e.target.value }))}
+                  placeholder={form.name || 'e.g. Uncanny Black'}
+                  className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink"
+                />
+                <p className="mt-1 font-mono text-[9px] text-muted-foreground/60">Name for the first (default) option in the colour dropdown</p>
+              </div>
+
+              <div className="max-h-64 overflow-y-auto space-y-2 pr-1">
                 {colors.map((c, i) => (
                   <div key={i} className="border border-ink/15 p-3 space-y-2">
                     <div className="flex items-center gap-2">
@@ -346,14 +360,14 @@ export default function ProductsTab() {
                     )}
                   </div>
                 ))}
-                <button
-                  type="button"
-                  onClick={() => setColors(prev => [...prev, { name: '', image_url: '', image_position: '50% 50%' }])}
-                  className="flex w-full items-center justify-center gap-2 border border-dashed border-ink/20 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:border-ink hover:text-ink"
-                >
-                  <Plus size={11} /> Add colour option
-                </button>
               </div>
+              <button
+                type="button"
+                onClick={() => setColors(prev => [...prev, { name: '', image_url: '', image_position: '50% 50%' }])}
+                className="mt-2 flex w-full items-center justify-center gap-2 border border-dashed border-ink/20 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:border-ink hover:text-ink"
+              >
+                <Plus size={11} /> Add colour option
+              </button>
             </div>
 
             {field('Tag (e.g. Bestseller)', 'tag')}

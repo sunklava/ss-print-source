@@ -7,6 +7,7 @@ export type Product = {
   image_url: string | null
   image_position: string | null
   tag: string | null
+  default_option_name: string | null
   order_index: number
   active: boolean
   featured: boolean

@@ -30,14 +30,16 @@ function ProductCard({ p, colors, onAddToCart }: {
     return () => document.removeEventListener('mousedown', handler)
   }, [dropdownOpen])
 
+  const defaultOptionLabel = p.default_option_name ?? p.name
+
   const activeColor = hoverColor ?? selectedColor
   const displayImage = activeColor?.image_url ?? p.image_url
   const displayPosition = activeColor?.image_position ?? p.image_position
-  const displayLabel = selectedColor?.name ?? p.name
+  const displayLabel = selectedColor?.name ?? defaultOptionLabel
 
   const handleAddToCart = () => {
     const cartId = selectedColor ? `${p.id}-${selectedColor.id}` : p.id
-    const cartName = selectedColor ? selectedColor.name : p.name
+    const cartName = selectedColor ? selectedColor.name : defaultOptionLabel
     const cartImage = selectedColor?.image_url ?? p.image_url
     onAddToCart(cartId, cartName, parsePrice(p.price), p.price, cartImage, p.category)
   }
@@ -112,7 +114,7 @@ function ProductCard({ p, colors, onAddToCart }: {
                     !selectedColor ? 'bg-ink text-paper' : 'hover:bg-paper-deep'
                   }`}
                 >
-                  {p.name}
+                  {defaultOptionLabel}
                 </button>
                 {colors.map(c => (
                   <button
