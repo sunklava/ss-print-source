@@ -11,7 +11,7 @@ const GENDERS = [
   { value: 'men',    label: "Men's" },
   { value: 'women',  label: "Women's" },
 ] as const
-const empty = { name: '', category: 'Shirts', gender: 'unisex' as const, price: '', image_url: '', image_position: '50% 50%', tag: '', active: true, featured: false }
+const empty = { name: '', category: 'Shirts', gender: 'unisex' as 'men' | 'women' | 'unisex', price: '', image_url: '', image_position: '50% 50%', tag: '', active: true, featured: false }
 
 type DraftColor = { id?: string; name: string; image_url: string; image_position: string }
 
@@ -292,7 +292,7 @@ export default function ProductsTab() {
             <div>
               <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Colour Options</label>
               <input ref={colorImgRef} type="file" accept="image/*" onChange={uploadColorImage} className="hidden" />
-              <div className="mt-2 space-y-2">
+              <div className="mt-2 max-h-64 overflow-y-auto space-y-2 pr-1">
                 {colors.map((c, i) => (
                   <div key={i} className="border border-ink/15 p-3 space-y-2">
                     <div className="flex items-center gap-2">

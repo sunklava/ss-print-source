@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import SectionHeader from "@/components/SectionHeader"
 import { supabase, isConfigured } from '@/lib/supabase'
 import type { Product, ProductColor } from '@/lib/db.types'
 import { useCart, parsePrice } from '@/lib/cart'
-import { ShoppingBag } from 'lucide-react'
+import { ShoppingBag, ChevronDown } from 'lucide-react'
 
 type ColorsByProduct = Record<string, ProductColor[]>
 
@@ -12,18 +12,40 @@ function ProductCard({ p, colors, onAddToCart }: {
   colors: ProductColor[]
   onAddToCart: (id: string, name: string, price: number, priceDisplay: string, image_url: string | null, category: string) => void
 }) {
-  const [selectedColor, setSelectedColor] = useState<ProductColor | null>(colors[0] ?? null)
+  // null = base product image selected
+  const [selectedColor, setSelectedColor] = useState<ProductColor | null>(null)
   const [hoverColor, setHoverColor] = useState<ProductColor | null>(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!dropdownOpen) return
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false)
+        setHoverColor(null)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [dropdownOpen])
 
   const activeColor = hoverColor ?? selectedColor
-  const displayImage = (activeColor?.image_url) ?? p.image_url
-  const displayPosition = (activeColor?.image_position) ?? p.image_position
+  const displayImage = activeColor?.image_url ?? p.image_url
+  const displayPosition = activeColor?.image_position ?? p.image_position
+  const displayLabel = selectedColor?.name ?? p.name
 
   const handleAddToCart = () => {
     const cartId = selectedColor ? `${p.id}-${selectedColor.id}` : p.id
     const cartName = selectedColor ? selectedColor.name : p.name
     const cartImage = selectedColor?.image_url ?? p.image_url
     onAddToCart(cartId, cartName, parsePrice(p.price), p.price, cartImage, p.category)
+  }
+
+  const selectColor = (c: ProductColor | null) => {
+    setSelectedColor(c)
+    setHoverColor(null)
+    setDropdownOpen(false)
   }
 
   return (
@@ -51,7 +73,7 @@ function ProductCard({ p, colors, onAddToCart }: {
         )}
         <button
           onClick={handleAddToCart}
-          aria-label={`Add ${selectedColor ? selectedColor.name : p.name} to cart`}
+          aria-label={`Add ${displayLabel} to cart`}
           className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-2 translate-y-2 bg-paper py-3 font-mono text-[11px] uppercase tracking-[0.2em] opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-ink hover:text-paper focus:translate-y-0 focus:opacity-100"
         >
           <ShoppingBag size={12} aria-hidden="true" /> Add to Cart
@@ -65,23 +87,49 @@ function ProductCard({ p, colors, onAddToCart }: {
           <span className="font-display text-lg font-semibold">{p.name}</span>
           <span className="font-mono text-xs">{p.price}</span>
         </div>
+
         {colors.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {colors.map(c => (
-              <button
-                key={c.id}
-                onMouseEnter={() => setHoverColor(c)}
-                onMouseLeave={() => setHoverColor(null)}
-                onClick={() => setSelectedColor(c)}
-                className={`font-mono text-[10px] uppercase tracking-[0.1em] px-2 py-1 transition border ${
-                  selectedColor?.id === c.id
-                    ? 'bg-ink text-paper border-ink'
-                    : 'border-ink/20 hover:border-ink'
-                }`}
-              >
-                {c.name}
-              </button>
-            ))}
+          <div ref={dropdownRef} className="relative mt-2">
+            {/* Trigger */}
+            <button
+              type="button"
+              onClick={() => setDropdownOpen(prev => !prev)}
+              className="flex w-full items-center justify-between border border-ink/20 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.1em] transition hover:border-ink"
+            >
+              <span>{displayLabel}</span>
+              <ChevronDown size={11} className={`shrink-0 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Dropdown list */}
+            {dropdownOpen && (
+              <div className="absolute left-0 right-0 top-full z-20 border border-t-0 border-ink/20 bg-paper shadow-sm">
+                {/* Default / base image option */}
+                <button
+                  type="button"
+                  onMouseEnter={() => setHoverColor(null)}
+                  onClick={() => selectColor(null)}
+                  className={`w-full px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.1em] transition ${
+                    !selectedColor ? 'bg-ink text-paper' : 'hover:bg-paper-deep'
+                  }`}
+                >
+                  {p.name}
+                </button>
+                {colors.map(c => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onMouseEnter={() => setHoverColor(c)}
+                    onMouseLeave={() => setHoverColor(null)}
+                    onClick={() => selectColor(c)}
+                    className={`w-full px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.1em] transition ${
+                      selectedColor?.id === c.id ? 'bg-ink text-paper' : 'hover:bg-paper-deep'
+                    }`}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
