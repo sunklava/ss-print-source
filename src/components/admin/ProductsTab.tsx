@@ -6,7 +6,12 @@ import { Pencil, Trash2, Plus, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 const CATEGORIES = ['Shirts', 'Hoodies', 'Sweaters', 'Jackets', 'Caps']
-const empty = { name: '', category: 'Shirts', price: '', image_url: '', image_position: '50% 50%', tag: '', active: true, featured: false }
+const GENDERS = [
+  { value: 'unisex', label: "Both (Men's & Women's)" },
+  { value: 'men',    label: "Men's" },
+  { value: 'women',  label: "Women's" },
+] as const
+const empty = { name: '', category: 'Shirts', gender: 'unisex' as const, price: '', image_url: '', image_position: '50% 50%', tag: '', active: true, featured: false }
 
 type DraftColor = { id?: string; name: string; image_url: string; image_position: string }
 
@@ -42,6 +47,7 @@ export default function ProductsTab() {
     setForm({
       name: p.name,
       category: p.category,
+      gender: p.gender ?? 'unisex',
       price: p.price,
       image_url: p.image_url ?? '',
       image_position: p.image_position ?? '50% 50%',
@@ -183,7 +189,7 @@ export default function ProductsTab() {
         <table className="w-full text-sm">
           <thead className="bg-paper-deep">
             <tr className="border-b border-ink/15">
-              {['Name', 'Category', 'Price', 'Tag', 'Featured', 'Status', ''].map(h => (
+              {['Name', 'Category', 'Section', 'Price', 'Tag', 'Featured', 'Status', ''].map(h => (
                 <th key={h} className="p-3 text-left font-mono text-[10px] uppercase tracking-[0.2em]">{h}</th>
               ))}
             </tr>
@@ -193,6 +199,7 @@ export default function ProductsTab() {
               <tr key={p.id} className="border-b border-ink/10 hover:bg-paper-deep/50">
                 <td className="p-3 font-display font-semibold">{p.name}</td>
                 <td className="p-3 font-mono text-xs">{p.category}</td>
+                <td className="p-3 font-mono text-xs capitalize">{p.gender === 'unisex' ? 'Both' : p.gender === 'men' ? "Men's" : "Women's"}</td>
                 <td className="p-3 font-mono text-xs">{p.price}</td>
                 <td className="p-3 font-mono text-xs text-muted-foreground">{p.tag ?? '—'}</td>
                 <td className="p-3">
@@ -220,7 +227,7 @@ export default function ProductsTab() {
               </tr>
             ))}
             {products.length === 0 && (
-              <tr><td colSpan={7} className="p-8 text-center text-muted-foreground font-mono text-xs">No products yet</td></tr>
+              <tr><td colSpan={8} className="p-8 text-center text-muted-foreground font-mono text-xs">No products yet</td></tr>
             )}
           </tbody>
         </table>
@@ -358,6 +365,16 @@ export default function ProductsTab() {
                 className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink"
               >
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Section</label>
+              <select
+                value={form.gender}
+                onChange={e => setForm({ ...form, gender: e.target.value as 'men' | 'women' | 'unisex' })}
+                className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink"
+              >
+                {GENDERS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
               </select>
             </div>
             <div className="flex items-center justify-between border border-ink/15 p-3">

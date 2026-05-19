@@ -89,10 +89,19 @@ function ProductCard({ p, colors, onAddToCart }: {
   )
 }
 
+type GenderTab = 'all' | 'men' | 'women'
+
+const GENDER_TABS: { value: GenderTab; label: string }[] = [
+  { value: 'all',   label: 'All' },
+  { value: 'men',   label: "Men's" },
+  { value: 'women', label: "Women's" },
+]
+
 const Shop = () => {
   const [products, setProducts] = useState<Product[]>([])
   const [colorsByProduct, setColorsByProduct] = useState<ColorsByProduct>({})
-  const [active, setActive] = useState("All")
+  const [gender, setGender] = useState<GenderTab>('all')
+  const [category, setCategory] = useState("All")
   const { addItem } = useCart()
 
   useEffect(() => {
@@ -113,8 +122,18 @@ const Shop = () => {
     })
   }, [])
 
-  const cats = ["All", ...Array.from(new Set(products.map(p => p.category)))]
-  const list = active === "All" ? products : products.filter(p => p.category === active)
+  const byGender = gender === 'all'
+    ? products
+    : products.filter(p => p.gender === gender || p.gender === 'unisex')
+
+  const cats = ["All", ...Array.from(new Set(byGender.map(p => p.category)))]
+
+  const list = category === "All" ? byGender : byGender.filter(p => p.category === category)
+
+  const handleGenderChange = (g: GenderTab) => {
+    setGender(g)
+    setCategory("All")
+  }
 
   const handleAddToCart = (id: string, name: string, price: number, priceDisplay: string, image_url: string | null, category: string) => {
     addItem({ id, name, price, priceDisplay, image_url, category })
@@ -130,18 +149,42 @@ const Shop = () => {
           level={1}
         />
 
+        {/* Gender tabs */}
+        <div
+          role="tablist"
+          aria-label="Shop by section"
+          className="mt-10 flex border-b border-ink/20"
+        >
+          {GENDER_TABS.map(({ value, label }) => (
+            <button
+              key={value}
+              role="tab"
+              aria-selected={gender === value}
+              onClick={() => handleGenderChange(value)}
+              className={`px-6 py-3 font-mono text-xs uppercase tracking-[0.2em] transition border-b-2 -mb-px ${
+                gender === value
+                  ? 'border-ink text-ink'
+                  : 'border-transparent text-muted-foreground hover:text-ink'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Category filters */}
         <div
           role="group"
           aria-label="Filter products by category"
-          className="mt-10 flex flex-wrap gap-2 border-b border-ink/15 pb-6"
+          className="mt-6 flex flex-wrap gap-2"
         >
           {cats.map((c) => (
             <button
               key={c}
-              onClick={() => setActive(c)}
-              aria-pressed={active === c}
+              onClick={() => setCategory(c)}
+              aria-pressed={category === c}
               className={`px-4 py-2 font-mono text-xs uppercase tracking-[0.2em] transition ${
-                active === c ? "bg-ink text-paper" : "border border-ink/20 hover:border-ink"
+                category === c ? "bg-ink text-paper" : "border border-ink/20 hover:border-ink"
               }`}
             >
               {c}

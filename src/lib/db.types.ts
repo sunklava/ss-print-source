@@ -2,6 +2,7 @@ export type Product = {
   id: string
   name: string
   category: string
+  gender: 'men' | 'women' | 'unisex'
   price: string
   image_url: string | null
   image_position: string | null
