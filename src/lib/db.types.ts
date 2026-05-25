@@ -78,8 +78,18 @@ export type ProductColor = {
 
 export type GalleryImage = {
   id: string
+  post_id: string | null
   image_url: string
   caption: string | null
   order_index: number
   active: boolean
+}
+
+export type GalleryPost = {
+  id: string
+  caption: string | null
+  order_index: number
+  active: boolean
+  created_at: string
+  images: GalleryImage[]
 }

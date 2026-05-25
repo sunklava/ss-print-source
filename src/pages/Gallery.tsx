@@ -1,49 +1,212 @@
-import { useState, useEffect } from 'react'
-import SectionHeader from "@/components/SectionHeader"
+import { useState, useEffect, useRef, useCallback } from 'react'
+import useEmblaCarousel from 'embla-carousel-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase, isConfigured } from '@/lib/supabase'
-import type { GalleryImage } from '@/lib/db.types'
+import type { GalleryPost } from '@/lib/db.types'
+import SectionHeader from '@/components/SectionHeader'
 
-const Gallery = () => {
-  const [images, setImages] = useState<GalleryImage[]>([])
+function relativeTime(dateStr: string) {
+  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000)
+  if (days === 0) return 'Today'
+  if (days === 1) return '1 day ago'
+  if (days < 7) return `${days} days ago`
+  if (days < 30) return `${Math.floor(days / 7)}w ago`
+  if (days < 365) return `${Math.floor(days / 30)}mo ago`
+  return `${Math.floor(days / 365)}y ago`
+}
+
+function PostCarousel({ images }: { images: GalleryPost['images'] }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, dragFree: false })
+  const [current, setCurrent] = useState(0)
+  const [canPrev, setCanPrev] = useState(false)
+  const [canNext, setCanNext] = useState(true)
+  const paused = useRef(false)
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return
+    setCurrent(emblaApi.selectedScrollSnap())
+    setCanPrev(emblaApi.canScrollPrev())
+    setCanNext(emblaApi.canScrollNext())
+  }, [emblaApi])
 
   useEffect(() => {
-    if (!isConfigured) return
-    supabase!.from('gallery').select('*').eq('active', true).order('order_index')
-      .then(({ data }) => { if (data) setImages(data) })
+    if (!emblaApi) return
+    emblaApi.on('select', onSelect)
+    onSelect()
+  }, [emblaApi, onSelect])
+
+  // Manual autoplay — advances every 3.5 s, pauses on hover/touch
+  useEffect(() => {
+    if (!emblaApi || images.length <= 1) return
+    const tick = setInterval(() => {
+      if (paused.current) return
+      if (emblaApi.canScrollNext()) emblaApi.scrollNext()
+      else emblaApi.scrollTo(0)
+    }, 3500)
+    return () => clearInterval(tick)
+  }, [emblaApi, images.length])
+
+  const prev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
+  const next = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
+  const goTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi])
+
+  return (
+    <div
+      className="relative overflow-hidden"
+      ref={emblaRef}
+      onMouseEnter={() => { paused.current = true }}
+      onMouseLeave={() => { paused.current = false }}
+      onTouchStart={() => { paused.current = true }}
+      onTouchEnd={() => { paused.current = false }}
+    >
+      {/* Slide track */}
+      <div className="flex">
+        {images.map(img => (
+          <div key={img.id} className="min-w-0 shrink-0 grow-0 basis-full">
+            <img
+              src={img.image_url}
+              alt=""
+              loading="lazy"
+              className="aspect-square w-full object-cover"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Slide counter */}
+      <div className="absolute right-3 top-3 bg-black/50 px-2 py-0.5 font-mono text-[10px] text-white backdrop-blur-sm">
+        {current + 1} / {images.length}
+      </div>
+
+      {/* Arrow buttons — desktop only */}
+      {canPrev && (
+        <button
+          onClick={prev}
+          aria-label="Previous image"
+          className="absolute left-2 top-1/2 -translate-y-1/2 hidden items-center justify-center bg-paper/85 p-2 backdrop-blur-sm transition hover:bg-paper md:flex"
+        >
+          <ChevronLeft size={16} />
+        </button>
+      )}
+      {canNext && (
+        <button
+          onClick={next}
+          aria-label="Next image"
+          className="absolute right-2 top-1/2 -translate-y-1/2 hidden items-center justify-center bg-paper/85 p-2 backdrop-blur-sm transition hover:bg-paper md:flex"
+        >
+          <ChevronRight size={16} />
+        </button>
+      )}
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5" aria-hidden="true">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              i === current ? 'w-5 bg-white' : 'w-1.5 bg-white/50'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function PostCard({ post }: { post: GalleryPost }) {
+  const isCarousel = post.images.length > 1
+
+  return (
+    <article className="overflow-hidden border border-ink/10 bg-paper shadow-sm">
+      {/* Post header */}
+      <div className="flex items-center gap-3 border-b border-ink/10 px-4 py-3">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-ink">
+          <span className="font-display text-[11px] font-black leading-none text-paper">SS</span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-mono text-xs font-semibold leading-tight">SS Print</p>
+          <p className="font-mono text-[10px] leading-tight text-muted-foreground">Kingston, JA</p>
+        </div>
+        <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
+          {relativeTime(post.created_at)}
+        </span>
+      </div>
+
+      {/* Image / Carousel */}
+      {post.images.length > 0 && (
+        isCarousel
+          ? <PostCarousel images={post.images} />
+          : <img
+              src={post.images[0].image_url}
+              alt=""
+              loading="lazy"
+              className="aspect-square w-full object-cover"
+            />
+      )}
+
+      {/* Caption */}
+      {post.caption && (
+        <div className="px-4 py-3.5">
+          <p className="font-mono text-xs leading-relaxed text-ink/80">
+            <span className="mr-2 font-semibold text-ink">SS Print</span>
+            {post.caption}
+          </p>
+        </div>
+      )}
+    </article>
+  )
+}
+
+const Gallery = () => {
+  const [posts, setPosts] = useState<GalleryPost[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!isConfigured) { setLoading(false); return }
+    supabase!
+      .from('gallery_posts')
+      .select('*, images:gallery(id, post_id, image_url, order_index)')
+      .eq('active', true)
+      .order('order_index')
+      .then(({ data }) => {
+        if (data) {
+          setPosts(
+            data.map(p => ({
+              ...p,
+              images: [...(p.images ?? [])].sort((a, b) => a.order_index - b.order_index),
+            }))
+          )
+        }
+        setLoading(false)
+      })
   }, [])
 
   return (
-    <section className="container py-16 md:py-24">
-      <SectionHeader
-        eyebrow="Gallery"
-        title={<>The <em className="italic font-normal">work.</em></>}
-        description="A sample of pieces pressed in the studio. Every job, every size, every print."
-        level={1}
-      />
+    <section className="py-16 md:py-24">
+      <div className="container">
+        <SectionHeader
+          eyebrow="Gallery"
+          title={<>The <em className="italic font-normal">work.</em></>}
+          description="A sample of pieces pressed in the studio. Every job, every size, every print."
+          level={1}
+        />
+      </div>
 
-      {images.length > 0 ? (
-        <div className="mt-12 columns-2 gap-3 md:columns-3 md:gap-4 lg:columns-4">
-          {images.map((img) => (
-            <figure key={img.id} className="group relative mb-3 break-inside-avoid overflow-hidden bg-paper-deep md:mb-4 m-0">
-              <img
-                src={img.image_url}
-                alt={img.caption ?? 'Gallery piece pressed at Sovereign & Sonata'}
-                loading="lazy"
-                className="w-full object-cover transition duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-ink/0 transition group-hover:bg-ink/30" aria-hidden="true" />
-              {img.caption && (
-                <figcaption className="absolute left-3 top-3 bg-paper px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em]">
-                  {img.caption}
-                </figcaption>
-              )}
-            </figure>
+      {loading ? (
+        <p className="mt-16 text-center font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Loading…
+        </p>
+      ) : posts.length === 0 ? (
+        <p className="mt-16 text-center font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          No posts yet
+        </p>
+      ) : (
+        <div className="mx-auto mt-12 max-w-[540px] space-y-6 px-4 sm:px-0">
+          {posts.map(post => (
+            <PostCard key={post.id} post={post} />
           ))}
         </div>
-      ) : (
-        <p className="mt-16 text-center font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          No gallery images yet
-        </p>
       )}
     </section>
   )
