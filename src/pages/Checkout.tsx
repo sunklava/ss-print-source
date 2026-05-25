@@ -8,16 +8,10 @@ import { ArrowLeft, Package, Truck } from 'lucide-react'
 
 const fmt = (n: number) => `$${n.toLocaleString('en-US')}`
 
-const US_STATES = [
-  'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut',
-  'Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa',
-  'Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan',
-  'Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada',
-  'New Hampshire','New Jersey','New Mexico','New York','North Carolina',
-  'North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island',
-  'South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont',
-  'Virginia','Washington','West Virginia','Wisconsin','Wyoming',
-  'Washington D.C.',
+const COUNTRIES = [
+  { code: 'US', name: 'United States', stateLabel: 'State', postalLabel: 'ZIP Code', postalPlaceholder: '10001', statePlaceholder: 'e.g. New York' },
+  { code: 'CA', name: 'Canada',        stateLabel: 'Province', postalLabel: 'Postal Code', postalPlaceholder: 'A1A 1A1', statePlaceholder: 'e.g. Ontario' },
+  { code: 'JM', name: 'Jamaica',       stateLabel: 'Parish', postalLabel: 'Postal Code', postalPlaceholder: 'JMAKN05', statePlaceholder: 'e.g. Kingston' },
 ]
 
 const paypalOptions = {
@@ -41,8 +35,9 @@ function CheckoutInner() {
   const [addressLine1, setAddressLine1] = useState('')
   const [addressLine2, setAddressLine2] = useState('')
   const [addressCity, setAddressCity] = useState('')
-  const [addressState, setAddressState] = useState('New York')
+  const [addressState, setAddressState] = useState('')
   const [addressZip, setAddressZip] = useState('')
+  const [addressCountry, setAddressCountry] = useState('US')
 
   if (items.length === 0) {
     return (
@@ -66,6 +61,7 @@ function CheckoutInner() {
         address_city: deliveryMethod === 'delivery' ? (addressLine2 ? `${addressLine2}, ${addressCity}` : addressCity) || null : null,
         address_parish: deliveryMethod === 'delivery' ? addressState : null,
         address_postal: deliveryMethod === 'delivery' ? addressZip || null : null,
+        address_country: deliveryMethod === 'delivery' ? countryName : null,
         product_type: items.map(i => i.name).join(', '),
         quantity: items.reduce((s, i) => s + i.quantity, 0),
         details: items.map(i => `${i.name} x${i.quantity} @ ${i.priceDisplay}`).join('\n'),
@@ -81,8 +77,9 @@ function CheckoutInner() {
     navigate('/')
   }
 
+  const countryName = COUNTRIES.find(c => c.code === addressCountry)?.name ?? addressCountry
   const formattedAddress = deliveryMethod === 'delivery'
-    ? [addressLine1, addressLine2, addressCity, addressState, addressZip].filter(Boolean).join(', ')
+    ? [addressLine1, addressLine2, addressCity, addressState, addressZip, countryName].filter(Boolean).join(', ')
     : 'Studio Pickup'
 
   return (
@@ -150,7 +147,7 @@ function CheckoutInner() {
                     <label htmlFor="checkout-phone" className={labelClass}>
                       Phone <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
                     </label>
-                    <input id="checkout-phone" required aria-required="true" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="(555) 000-0000" className={inputClass} />
+                    <input id="checkout-phone" required aria-required="true" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 876 000 0000" className={inputClass} />
                   </div>
                 </div>
 
@@ -187,45 +184,54 @@ function CheckoutInner() {
                   </div>
                 </div>
 
-                {/* Shipping address — US format */}
-                {deliveryMethod === 'delivery' && (
-                  <div className="space-y-5 border-t border-ink/10 pt-6">
-                    <h3 className="font-display text-base font-semibold">Shipping Address</h3>
-                    <div>
-                      <label htmlFor="checkout-address1" className={labelClass}>
-                        Street Address <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
-                      </label>
-                      <input id="checkout-address1" required aria-required="true" value={addressLine1} onChange={e => setAddressLine1(e.target.value)} placeholder="123 Main St" className={inputClass} />
-                    </div>
-                    <div>
-                      <label htmlFor="checkout-address2" className={labelClass}>Apt, Suite, Unit (optional)</label>
-                      <input id="checkout-address2" value={addressLine2} onChange={e => setAddressLine2(e.target.value)} placeholder="Apt 4B" className={inputClass} />
-                    </div>
-                    <div>
-                      <label htmlFor="checkout-city" className={labelClass}>
-                        City <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
-                      </label>
-                      <input id="checkout-city" required aria-required="true" value={addressCity} onChange={e => setAddressCity(e.target.value)} className={inputClass} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+                {/* Shipping address — international */}
+                {deliveryMethod === 'delivery' && (() => {
+                  const country = COUNTRIES.find(c => c.code === addressCountry) ?? COUNTRIES[0]
+                  return (
+                    <div className="space-y-5 border-t border-ink/10 pt-6">
+                      <h3 className="font-display text-base font-semibold">Shipping Address</h3>
                       <div>
-                        <label htmlFor="checkout-state" className={labelClass}>
-                          State <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                        <label htmlFor="checkout-country" className={labelClass}>
+                          Country <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
                         </label>
-                        <select id="checkout-state" required aria-required="true" value={addressState} onChange={e => setAddressState(e.target.value)}
+                        <select id="checkout-country" required aria-required="true" value={addressCountry} onChange={e => { setAddressCountry(e.target.value); setAddressState(''); setAddressZip('') }}
                           className="mt-1 w-full border-b border-ink/30 bg-transparent py-2 text-sm outline-none focus:border-ink">
-                          {US_STATES.map(s => <option key={s}>{s}</option>)}
+                          {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label htmlFor="checkout-zip" className={labelClass}>
-                          ZIP Code <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                        <label htmlFor="checkout-address1" className={labelClass}>
+                          Street Address <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
                         </label>
-                        <input id="checkout-zip" required aria-required="true" value={addressZip} onChange={e => setAddressZip(e.target.value)} placeholder="10001" maxLength={10} className={inputClass} />
+                        <input id="checkout-address1" required aria-required="true" value={addressLine1} onChange={e => setAddressLine1(e.target.value)} placeholder="123 Main St" className={inputClass} />
+                      </div>
+                      <div>
+                        <label htmlFor="checkout-address2" className={labelClass}>Apt, Suite, Unit (optional)</label>
+                        <input id="checkout-address2" value={addressLine2} onChange={e => setAddressLine2(e.target.value)} placeholder="Apt 4B" className={inputClass} />
+                      </div>
+                      <div>
+                        <label htmlFor="checkout-city" className={labelClass}>
+                          City <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                        </label>
+                        <input id="checkout-city" required aria-required="true" value={addressCity} onChange={e => setAddressCity(e.target.value)} className={inputClass} />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="checkout-state" className={labelClass}>
+                            {country.stateLabel} <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                          </label>
+                          <input id="checkout-state" required aria-required="true" value={addressState} onChange={e => setAddressState(e.target.value)} placeholder={country.statePlaceholder} className={inputClass} />
+                        </div>
+                        <div>
+                          <label htmlFor="checkout-zip" className={labelClass}>
+                            {country.postalLabel} <span aria-hidden="true">*</span><span className="sr-only">(required)</span>
+                          </label>
+                          <input id="checkout-zip" required aria-required="true" value={addressZip} onChange={e => setAddressZip(e.target.value)} placeholder={country.postalPlaceholder} className={inputClass} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )
+                })()}
 
                 <button type="submit" className="w-full bg-ink py-3.5 font-mono text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-stamp">
                   Continue to Payment
