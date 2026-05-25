@@ -108,7 +108,7 @@ const Footer = () => {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-ink/10 pt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground md:flex-row">
           <span>© {new Date().getFullYear()} Sovereign & Sonata — Kingston, JA</span>
-          <span>Pressed · Printed · Personal</span>
+          <span>Curated · Crafted · Worn</span>
         </div>
       </div>
     </footer>

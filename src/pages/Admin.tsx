@@ -3,7 +3,6 @@ import type { User } from '@supabase/supabase-js'
 import { supabase, isConfigured } from '@/lib/supabase'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ProductsTab from '@/components/admin/ProductsTab'
-import PricingTab from '@/components/admin/PricingTab'
 import ContentTab from '@/components/admin/ContentTab'
 import OrdersTab from '@/components/admin/OrdersTab'
 import GalleryTab from '@/components/admin/GalleryTab'
@@ -109,7 +108,7 @@ export default function Admin() {
       <main className="container py-8" id="admin-content">
         <Tabs defaultValue="products">
           <TabsList className="mb-8 h-auto flex-wrap gap-1 bg-paper-deep p-1">
-            {['products', 'pricing', 'content', 'orders', 'gallery'].map(tab => (
+            {['products', 'content', 'orders', 'gallery'].map(tab => (
               <TabsTrigger key={tab} value={tab}
                 className="font-mono text-xs uppercase tracking-[0.15em] data-[state=active]:bg-ink data-[state=active]:text-paper">
                 {tab}
@@ -117,7 +116,6 @@ export default function Admin() {
             ))}
           </TabsList>
           <TabsContent value="products"><ProductsTab /></TabsContent>
-          <TabsContent value="pricing"><PricingTab /></TabsContent>
           <TabsContent value="content"><ContentTab /></TabsContent>
           <TabsContent value="orders"><OrdersTab /></TabsContent>
           <TabsContent value="gallery"><GalleryTab /></TabsContent>

@@ -5,21 +5,21 @@ import { Plus, Trash2, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 const defaults: Omit<SiteContent, 'id'> = {
-  hero_eyebrow: 'Vol. 01 — Spring Press',
+  hero_eyebrow: 'Vol. 01 — Spring Collection',
   hero_heading: 'Wear your ideas.',
-  hero_subtext: 'Custom printing & apparel out of Jamaica. From a single tee to a full team kit — we press it sharp, fast, and built to last.',
+  hero_subtext: 'Premium apparel out of Jamaica. Curated styles, quality fabrics, and fast island-wide delivery.',
   hero_image_url: null,
   workshop_image_url: null,
   stats: [
-    { key: '500+', label: 'Pieces Pressed' },
-    { key: '48h', label: 'Avg. Turnaround' },
-    { key: '100%', label: 'Custom' },
+    { key: '500+', label: 'Pieces Sold' },
+    { key: '48h', label: 'Avg. Delivery' },
+    { key: '100%', label: 'Quality' },
   ],
-  marquee_items: ['Custom Printing', 'Heat Press', 'Embroidery', 'Screen Print', 'Kingston, JA'],
+  marquee_items: ['Premium Apparel', 'Fast Island Delivery', 'New Arrivals', 'Kingston, JA', 'Quality Fabrics'],
   contact_phone: '+1 (876) 000-0000',
   contact_email: 'hello@ssprint.jm',
   contact_hours: 'Mon–Sat · 9am–7pm',
-  footer_tagline: 'Pressed · Printed · Personal',
+  footer_tagline: 'Premium apparel out of Jamaica. Curated with care, built for the bold.',
 }
 
 export default function ContentTab() {
@@ -72,7 +72,7 @@ export default function ContentTab() {
   const addStat = () => setContent({ ...content, stats: [...content.stats, { key: '', label: '' }] })
   const removeStat = (i: number) => setContent({ ...content, stats: content.stats.filter((_, j) => j !== i) })
   const setMarquee = (value: string) =>
-    setContent({ ...content, marquee_items: value.split('\n').map(s => s.trim()).filter(Boolean) })
+    setContent({ ...content, marquee_items: value.split('\n').filter(s => s.trim().length > 0) })
 
   const textField = (label: string, key: keyof typeof defaults, rows?: number) => (
     <div key={key}>

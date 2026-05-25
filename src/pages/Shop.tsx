@@ -215,9 +215,9 @@ const Shop = () => {
     <>
       <section className="container py-16 md:py-24">
         <SectionHeader
-          eyebrow="Shop the Press"
+          eyebrow="Shop the Collection"
           title={<>The <em className="italic font-normal">collection.</em></>}
-          description="Curated essentials, pressed with precision in our Kingston studio."
+          description="Curated essentials from our Kingston collection."
           level={1}
         />
 

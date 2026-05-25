@@ -9,13 +9,13 @@ import { supabase, isConfigured } from '@/lib/supabase'
 import type { Product, SiteContent } from '@/lib/db.types'
 
 const defaultContent: Omit<SiteContent, 'id'> = {
-  hero_eyebrow: 'Vol. 01 — Spring Press',
+  hero_eyebrow: 'Vol. 01 — Spring Collection',
   hero_heading: 'Wear your ideas.',
-  hero_subtext: 'Apparel & print out of Jamaica. From a single tee to a full team kit — pressed sharp, fast, and built to last.',
+  hero_subtext: 'Premium apparel out of Jamaica. Curated styles, quality fabrics, and fast island-wide delivery.',
   hero_image_url: null,
   workshop_image_url: null,
   stats: [
-    { key: '500+', label: 'Pieces Pressed' },
+    { key: '500+', label: 'Pieces Sold' },
     { key: '48h', label: 'Avg. Turnaround' },
     { key: '100%', label: 'Quality' },
   ],
@@ -27,9 +27,9 @@ const defaultContent: Omit<SiteContent, 'id'> = {
 }
 
 const steps = [
-  { n: "01", icon: Palette, title: "Browse the catalogue", body: "Shop our curated selection of apparel and accessories, each piece pressed in our Kingston studio." },
+  { n: "01", icon: Palette, title: "Browse the catalogue", body: "Shop our curated selection of apparel and accessories, sourced for quality and style." },
   { n: "02", icon: Sparkles, title: "Checkout securely", body: "Easy PayPal payments. Your order is confirmed instantly with no back-and-forth." },
-  { n: "03", icon: Truck, title: "Pickup or delivery", body: "Fast turnaround across the island. One piece or one thousand." },
+  { n: "03", icon: Truck, title: "Pickup or delivery", body: "Fast island-wide delivery or studio pickup. Based in Kingston, JA." },
 ]
 
 const Home = () => {
@@ -99,7 +99,7 @@ const Home = () => {
                 height={1350}
               />
               <div className="absolute -bottom-4 -right-4 bg-paper border border-ink px-4 py-2 font-mono text-xs uppercase tracking-[0.2em]" aria-hidden="true">
-                Pressed in JA ✶
+                Kingston, JA ✶
               </div>
             </div>
           </div>
@@ -197,10 +197,10 @@ const Home = () => {
           <h2 className="font-display text-4xl font-black leading-[1] md:text-7xl">
             Premium apparel,
             <br />
-            <span className="italic">pressed in JA.</span>
+            <span className="italic">shipped from JA.</span>
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
-            Quality pieces pressed sharp in our Kingston studio. Browse the collection and order directly online.
+            Quality styles curated for every wardrobe. Browse the collection and order directly online.
           </p>
           <Link
             to="/shop"

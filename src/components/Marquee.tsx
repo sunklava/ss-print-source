@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { supabase, isConfigured } from '@/lib/supabase'
 
 const defaultItems = [
-  "High-Quality Heat Press",
-  "Fast Turnaround",
-  "Bulk & Single Orders",
-  "Original Designs",
-  "Made in Jamaica",
   "Premium Apparel",
+  "Fast Island Delivery",
+  "New Arrivals",
+  "Kingston, JA",
+  "Quality Fabrics",
+  "Shop the Collection",
 ]
 
 const Marquee = () => {

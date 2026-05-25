@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
 
 const reasons = [
-  "High-quality prints that last",
-  "Fast and reliable service",
+  "High-quality apparel that lasts",
+  "Fast and reliable island-wide delivery",
   "Wide range of premium apparel and accessories",
-  "Affordable pricing for both single and bulk orders",
+  "Affordable pricing on every order",
 ];
 
 const About = () => {
@@ -16,7 +16,7 @@ const About = () => {
       <section className="container py-16 md:py-24">
         <SectionHeader
           eyebrow="About"
-          title={<>Bringing ideas <em className="italic font-normal">to life,</em> one press at a time.</>}
+          title={<>Premium apparel, <em className="italic font-normal">built for you.</em></>}
           level={1}
         />
 
@@ -37,29 +37,27 @@ const About = () => {
                 Specialty
               </div>
               <div className="mt-1 font-display text-2xl font-bold">
-                Apparel & Print
+                Premium Apparel
               </div>
             </div>
           </div>
 
           <div className="md:col-span-7 space-y-6 text-base leading-relaxed text-foreground/90 md:text-lg">
             <p>
-              At <strong>Sovereign & Sonata</strong>, we bring ideas to life through
-              high-quality apparel and print. Based in Jamaica, our
-              business is built on creativity, precision, and the drive to help
-              individuals and brands stand out.
+              At <strong>Sovereign & Sonata</strong>, we curate premium apparel built for
+              those who want to stand out. Based in Kingston, Jamaica, our business is
+              built on quality, style, and the drive to bring bold fashion to the island.
             </p>
             <p>
-              We specialize in clothing and printed merchandise — from T-shirts and hoodies
-              to mugs, hats, and more. Every product is crafted with attention to detail
-              using professional heat press technology in our Kingston studio.
+              We stock a carefully selected range of clothing — from T-shirts and hoodies
+              to hats and accessories. Every piece is chosen for its quality, fit, and
+              lasting appeal, so you always look and feel your best.
             </p>
             <p>
-              Sovereign & Sonata serves a wide range of customers — from individuals
-              looking for unique, one-of-a-kind pieces to businesses, schools,
-              and event organizers in need of branded apparel and promotional
-              items. Single orders or bulk runs, we focus on quality, consistency,
-              and fast turnaround.
+              Sovereign & Sonata serves everyone — individuals looking for everyday
+              essentials, fashion-forward pieces, and wardrobe staples. We keep
+              things simple: great apparel, fair prices, and fast island-wide delivery
+              or studio pickup in Kingston.
             </p>
 
             <div className="my-10 border-l-4 border-stamp bg-paper-deep p-6 md:p-8">
@@ -67,15 +65,14 @@ const About = () => {
                 Our Mission
               </div>
               <p className="mt-3 font-display text-xl italic leading-snug md:text-2xl">
-                "To provide reliable printing services while helping our
-                customers express their identity, promote their brand, and
-                create memorable products."
+                "To make premium apparel accessible to everyone in Jamaica —
+                delivering quality, style, and confidence with every order."
               </p>
             </div>
 
             <p>
-              As we continue to grow, Sovereign & Sonata aims to become a full clothing brand —
-              combining original designs with premium materials, all pressed in Jamaica.
+              As we grow, Sovereign & Sonata is becoming a destination for premium
+              fashion in Jamaica — a place where quality pieces are always within reach.
             </p>
           </div>
         </div>
@@ -92,10 +89,10 @@ const About = () => {
               <h2 className="font-display text-4xl font-bold leading-[1.05] md:text-6xl">
                 Built different.
                 <br />
-                <em className="italic text-stamp">Pressed</em> better.
+                <em className="italic text-stamp">Styled</em> better.
               </h2>
               <p className="mt-6 text-paper/70">
-                At Sovereign & Sonata, your ideas don't just stay ideas — we make them real.
+                At Sovereign & Sonata, great style shouldn't be hard to find — we bring it to you.
               </p>
               <Link
                 to="/shop"
