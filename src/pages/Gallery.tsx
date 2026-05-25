@@ -62,13 +62,13 @@ function PostCarousel({ images }: { images: GalleryPost['images'] }) {
               role="group"
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${images.length}`}
-              className="min-w-0 shrink-0 grow-0 basis-full"
+              className="min-w-0 shrink-0 grow-0 basis-full bg-paper-deep"
             >
               <img
                 src={img.image_url}
                 alt=""
                 loading="lazy"
-                className="aspect-square w-full object-cover"
+                className="aspect-square w-full object-contain"
               />
             </div>
           ))}
@@ -149,7 +149,7 @@ function PostCard({ post }: { post: GalleryPost }) {
               src={post.images[0].image_url}
               alt=""
               loading="lazy"
-              className="aspect-square w-full object-cover"
+              className="aspect-square w-full object-contain bg-paper-deep"
             />
       )}
 
