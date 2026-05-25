@@ -4,16 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase, isConfigured } from '@/lib/supabase'
 import type { GalleryPost } from '@/lib/db.types'
 import SectionHeader from '@/components/SectionHeader'
-
-function relativeTime(dateStr: string) {
-  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000)
-  if (days === 0) return 'Today'
-  if (days === 1) return '1 day ago'
-  if (days < 7) return `${days} days ago`
-  if (days < 30) return `${Math.floor(days / 7)}w ago`
-  if (days < 365) return `${Math.floor(days / 30)}mo ago`
-  return `${Math.floor(days / 365)}y ago`
-}
+import logo from '@/assets/logo_transparent_background.png'
 
 function PostCarousel({ images }: { images: GalleryPost['images'] }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, dragFree: false })
@@ -121,16 +112,11 @@ function PostCard({ post }: { post: GalleryPost }) {
     <article className="overflow-hidden border border-ink/10 bg-paper shadow-sm">
       {/* Post header */}
       <div className="flex items-center gap-3 border-b border-ink/10 px-4 py-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-ink">
-          <span className="font-display text-[11px] font-black leading-none text-paper">SS</span>
-        </div>
-        <div className="flex-1 min-w-0">
+        <img src={logo} alt="SS Print" className="h-9 w-9 shrink-0 object-contain" />
+        <div className="min-w-0">
           <p className="font-mono text-xs font-semibold leading-tight">SS Print</p>
           <p className="font-mono text-[10px] leading-tight text-muted-foreground">Kingston, JA</p>
         </div>
-        <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
-          {relativeTime(post.created_at)}
-        </span>
       </div>
 
       {/* Image / Carousel */}
