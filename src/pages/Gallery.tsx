@@ -62,14 +62,14 @@ function PostCarousel({ images }: { images: GalleryPost['images'] }) {
               role="group"
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${images.length}`}
-              className="min-w-0 shrink-0 grow-0 basis-full bg-paper-deep"
+              className="relative aspect-square min-w-0 shrink-0 grow-0 basis-full overflow-hidden"
             >
-              <img
-                src={img.image_url}
-                alt=""
-                loading="lazy"
-                className="aspect-square w-full object-contain"
-              />
+              {/* Blurred background fill */}
+              <img src={img.image_url} alt="" aria-hidden="true"
+                className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-75" />
+              {/* Main image */}
+              <img src={img.image_url} alt="" loading="lazy"
+                className="relative h-full w-full object-contain" />
             </div>
           ))}
         </div>
@@ -145,12 +145,14 @@ function PostCard({ post }: { post: GalleryPost }) {
       {post.images.length > 0 && (
         isCarousel
           ? <PostCarousel images={post.images} />
-          : <img
-              src={post.images[0].image_url}
-              alt=""
-              loading="lazy"
-              className="aspect-square w-full object-contain bg-paper-deep"
-            />
+          : <div className="relative aspect-square overflow-hidden">
+              {/* Blurred background fill */}
+              <img src={post.images[0].image_url} alt="" aria-hidden="true"
+                className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-75" />
+              {/* Main image */}
+              <img src={post.images[0].image_url} alt="" loading="lazy"
+                className="relative h-full w-full object-contain" />
+            </div>
       )}
 
       {/* Caption */}
