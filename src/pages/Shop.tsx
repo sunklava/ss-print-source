@@ -231,7 +231,9 @@ const Shop = () => {
             <button
               key={value}
               role="tab"
+              id={`tab-${value}`}
               aria-selected={gender === value}
+              aria-controls="shop-panel"
               onClick={() => handleGenderChange(value)}
               className={`px-6 py-3 font-mono text-xs uppercase tracking-[0.2em] transition border-b-2 -mb-px ${
                 gender === value
@@ -264,7 +266,12 @@ const Shop = () => {
           ))}
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-8 lg:grid-cols-4">
+        <div
+          id="shop-panel"
+          role="tabpanel"
+          aria-labelledby={`tab-${gender}`}
+          className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-8 lg:grid-cols-4"
+        >
           {list.map((p) => (
             <ProductCard
               key={p.id}
