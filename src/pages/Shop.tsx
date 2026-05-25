@@ -36,8 +36,6 @@ function ProductCard({ p, colors, onAddToCart }: {
 
   // hoverDefault overrides everything — shows base product image even when a colour is selected
   const activeColor = hoverDefault ? null : (hoverColor ?? selectedColor)
-  const displayImage = activeColor?.image_url ?? p.image_url
-  const displayPosition = activeColor?.image_position ?? p.image_position
   const displayLabel = selectedColor?.name ?? defaultOptionLabel
 
   const handleAddToCart = () => {
@@ -56,22 +54,41 @@ function ProductCard({ p, colors, onAddToCart }: {
 
   return (
     <div className="group">
-      <div className="relative overflow-hidden bg-paper-deep">
-        {displayImage ? (
+      <div className="relative aspect-[4/5] overflow-hidden bg-paper-deep">
+        {/* Base product image — visible when no colour (or active colour has no image) */}
+        {p.image_url ? (
           <img
-            src={displayImage}
-            alt={activeColor ? activeColor.name : p.name}
+            src={p.image_url}
+            alt={p.name}
             loading="lazy"
-            className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105"
-            style={{ objectPosition: displayPosition ?? 'center' }}
+            className={`absolute inset-0 h-full w-full object-cover [transition:opacity_150ms_ease,transform_500ms_ease] group-hover:scale-105 ${
+              !activeColor || !activeColor.image_url ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ objectPosition: p.image_position ?? 'center' }}
           />
         ) : (
-          <div className="aspect-[4/5] w-full bg-paper-deep flex items-center justify-center">
+          <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ${
+            !activeColor || !activeColor.image_url ? 'opacity-100' : 'opacity-0'
+          }`}>
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               No image
             </span>
           </div>
         )}
+
+        {/* Colour layers — pre-rendered so the browser fetches them all upfront; switching is a pure CSS opacity crossfade */}
+        {colors.filter(c => c.image_url).map(c => (
+          <img
+            key={c.id}
+            src={c.image_url!}
+            alt={c.name}
+            className={`absolute inset-0 h-full w-full object-cover [transition:opacity_150ms_ease,transform_500ms_ease] group-hover:scale-105 ${
+              activeColor?.id === c.id ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ objectPosition: c.image_position ?? 'center' }}
+          />
+        ))}
+
         {p.tag && (
           <span className="absolute left-3 top-3 bg-ink px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-paper">
             {p.tag}
